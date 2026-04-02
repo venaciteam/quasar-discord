@@ -1,0 +1,13 @@
+node_modules/
+data/
+.env
+.env.local
+*.bak
+*.broken
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+npm-debug.log*
+CLAUDE.md

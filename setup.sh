@@ -1,0 +1,99 @@
+#!/bin/bash
+# ═══════════════════════════════════
+#   Atom — Script d'installation
+# ═══════════════════════════════════
+
+set -e
+
+GREEN="\033[0;32m"
+YELLOW="\033[1;33m"
+RED="\033[0;31m"
+CYAN="\033[0;36m"
+NC="\033[0m"
+
+echo -e "${CYAN}"
+echo "  ⚛  Atom — Installation"
+echo "  ═══════════════════════"
+echo -e "${NC}"
+
+# Vérifier Docker
+if ! command -v docker &> /dev/null; then
+    echo -e "${RED}❌ Docker n'est pas installé.${NC}"
+    echo "   Installe Docker : https://docs.docker.com/get-docker/"
+    exit 1
+fi
+
+if ! docker compose version &> /dev/null; then
+    echo -e "${RED}❌ Docker Compose n'est pas disponible.${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Docker détecté${NC}"
+
+# Créer le fichier .env si absent
+if [ ! -f .env ]; then
+    if [ ! -f .env.example ]; then
+        echo -e "${RED}❌ .env.example introuvable.${NC}"
+        exit 1
+    fi
+
+    echo ""
+    echo -e "${YELLOW}📝 Configuration du bot${NC}"
+    echo ""
+
+    read -sp "   Token du bot Discord : " DISCORD_TOKEN
+    echo ""
+    read -p "   Client ID (OAuth2) : " DISCORD_CLIENT_ID
+    read -sp "   Client Secret (OAuth2) : " DISCORD_CLIENT_SECRET
+    echo ""
+    read -p "   Port du dashboard [3050] : " PORT
+    PORT=${PORT:-3050}
+    read -p "   Callback URL [http://localhost:${PORT}/callback] : " CALLBACK_URL
+    CALLBACK_URL=${CALLBACK_URL:-http://localhost:${PORT}/callback}
+
+    JWT_SECRET=$(openssl rand -hex 32)
+
+    cp .env.example .env
+    sed -i "s|DISCORD_TOKEN=.*|DISCORD_TOKEN=${DISCORD_TOKEN}|" .env
+    sed -i "s|DISCORD_CLIENT_ID=.*|DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}|" .env
+    sed -i "s|DISCORD_CLIENT_SECRET=.*|DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}|" .env
+    sed -i "s|CALLBACK_URL=.*|CALLBACK_URL=${CALLBACK_URL}|" .env
+    sed -i "s|JWT_SECRET=.*|JWT_SECRET=${JWT_SECRET}|" .env
+    sed -i "s|PORT=.*|PORT=${PORT}|" .env
+
+    echo ""
+    echo -e "${GREEN}✅ Fichier .env créé${NC}"
+else
+    echo -e "${GREEN}✅ Fichier .env existant conservé${NC}"
+fi
+
+# Créer le volume Docker
+if ! docker volume inspect atom-data &> /dev/null 2>&1; then
+    docker volume create atom-data
+    echo -e "${GREEN}✅ Volume atom-data créé${NC}"
+else
+    echo -e "${GREEN}✅ Volume atom-data existant${NC}"
+fi
+
+# Build et lancement
+echo ""
+echo -e "${CYAN}🔨 Build de l'image Docker...${NC}"
+docker compose build
+
+echo ""
+echo -e "${CYAN}🚀 Lancement d'Atom...${NC}"
+docker compose up -d
+
+echo ""
+echo -e "${GREEN}═══════════════════════════════════${NC}"
+echo -e "${GREEN}  ✅ Atom est en ligne !${NC}"
+echo -e "${GREEN}═══════════════════════════════════${NC}"
+echo ""
+echo -e "  Dashboard : ${CYAN}http://localhost:${PORT:-3050}${NC}"
+echo -e "  Logs      : ${CYAN}docker logs atom${NC}"
+echo ""
+echo -e "${YELLOW}  N'oublie pas d'inviter le bot sur ton serveur Discord !${NC}"
+echo -e "  → Developer Portal → OAuth2 → URL Generator"
+echo -e "  → Scopes: bot + applications.commands"
+echo -e "  → Permissions: Administrator"
+echo ""

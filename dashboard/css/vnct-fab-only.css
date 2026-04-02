@@ -1,0 +1,236 @@
+/* ============================================================================
+   VNCT FAB + Modals — Subset du Design System pour Atom
+   Atom a son propre CSS complet, on ne charge que les composants VNCT nécessaires.
+   ============================================================================ */
+
+/* Variables nécessaires au FAB */
+:root {
+  --accent-h: 330;
+  --accent-s: 90%;
+  --accent-l: 60%;
+  --accent: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
+  --neon-shadow-sm: 0 0 6px hsla(var(--accent-h), var(--accent-s), 60%, 0.4);
+  --neon-shadow-md: 0 0 12px hsla(var(--accent-h), var(--accent-s), 60%, 0.5),
+                    0 0 24px hsla(var(--accent-h), var(--accent-s), 60%, 0.2);
+  --neon-shadow-lg: 0 0 16px hsla(var(--accent-h), var(--accent-s), 60%, 0.6),
+                    0 0 32px hsla(var(--accent-h), var(--accent-s), 60%, 0.3),
+                    0 0 64px hsla(var(--accent-h), var(--accent-s), 60%, 0.1);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.563rem;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --leading-relaxed: 1.7;
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+}
+
+/* Accent cyan en mode clair — override global */
+[data-theme="light"] {
+  --accent-h: 185; --accent-s: 80%; --accent-l: 45%;
+  --accent: hsl(185, 80%, 45%);
+  --neon-shadow-sm: 0 0 6px hsla(185, 80%, 45%, 0.4);
+  --neon-shadow-md: 0 0 12px hsla(185, 80%, 45%, 0.5), 0 0 24px hsla(185, 80%, 45%, 0.2);
+  --neon-shadow-lg: 0 0 16px hsla(185, 80%, 45%, 0.6), 0 0 32px hsla(185, 80%, 45%, 0.3);
+}
+[data-theme="light"] .vnct-fab {
+  box-shadow: 0 0 12px hsla(185, 80%, 45%, 0.5);
+}
+[data-theme="light"] .vnct-fab-menu__item {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #1a1a2e;
+}
+[data-theme="light"] .vnct-fab-menu__item:hover {
+  border-color: hsl(185, 80%, 45%);
+  box-shadow: 0 0 6px hsla(185, 80%, 45%, 0.3);
+}
+[data-theme="light"] .vnct-fab-overlay { background: rgba(0, 0, 0, 0.15); }
+[data-theme="light"] .vnct-modal-overlay {
+  --text-primary: #1a1a2e; --text-secondary: rgba(0,0,0,.55); --text-muted: rgba(0,0,0,.35);
+  --bg-secondary: #ffffff; --bg-tertiary: #f0f0f4; --border-default: rgba(0,0,0,.1);
+  --surface-hover: rgba(0,0,0,.04);
+}
+[data-theme="light"] .vnct-modal,
+[data-theme="light"] .modal {
+  border-color: hsl(185, 80%, 45%);
+  box-shadow: 0 0 16px hsla(185, 80%, 45%, 0.3);
+}
+[data-theme="light"] .vnct-btn--primary,
+[data-theme="light"] .modal .btn-primary {
+  background: hsl(185, 80%, 45%); border-color: hsl(185, 80%, 45%); color: #fff;
+}
+[data-theme="light"] .vnct-version-badge { color: #9090a5; }
+
+/* Atom utilise ses propres variables de couleur */
+.vnct-fab { --bg-glass: rgba(18, 18, 26, 0.7); --border-default: rgba(255, 255, 255, 0.08); --text-primary: #f0f0f5; --text-secondary: #a0a0b5; --text-muted: #606075; --bg-secondary: #12121a; --bg-tertiary: #1a1a28; --surface-hover: rgba(255, 255, 255, 0.05); --surface-active: rgba(255, 255, 255, 0.08); }
+.vnct-fab-menu { --bg-glass: rgba(18, 18, 26, 0.7); --border-default: rgba(255, 255, 255, 0.08); --text-primary: #f0f0f5; }
+.vnct-fab-overlay { --border-default: rgba(255, 255, 255, 0.08); }
+.vnct-modal-overlay { --bg-secondary: #12121a; --border-default: rgba(255, 255, 255, 0.08); --text-primary: #f0f0f5; --text-secondary: #a0a0b5; --text-muted: #606075; --bg-tertiary: #1a1a28; --surface-hover: rgba(255, 255, 255, 0.05); }
+.vnct-version-badge { --text-muted: #606075; }
+
+/* FAB */
+.vnct-fab {
+  position: fixed; bottom: var(--space-6); right: var(--space-6); z-index: 900;
+  width: 56px; height: 56px; border-radius: var(--radius-full);
+  background: var(--accent); color: #000; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--neon-shadow-md); transition: all 0.3s ease;
+}
+.vnct-fab:hover { transform: scale(1.08); box-shadow: var(--neon-shadow-lg); }
+.vnct-fab:active { transform: scale(0.95); }
+.vnct-fab--open { transform: rotate(45deg); }
+.vnct-fab--open:hover { transform: rotate(45deg) scale(1.08); }
+
+.vnct-fab-menu {
+  position: fixed; bottom: calc(56px + var(--space-8)); right: var(--space-6); z-index: 899;
+  display: flex; flex-direction: column; align-items: stretch; gap: var(--space-3);
+  animation: vnct-scale-in var(--duration-fast) var(--ease-spring);
+}
+.vnct-fab-menu[aria-hidden="true"] { display: none; }
+.vnct-fab-menu--closing { animation: vnct-fab-menu-out 200ms var(--ease-smooth) forwards; }
+.vnct-fab-menu--closing .vnct-fab-menu__item { animation: vnct-fab-item-out 150ms ease forwards; }
+.vnct-fab-menu--closing .vnct-fab-menu__item:nth-child(3) { animation-delay: 0s; }
+.vnct-fab-menu--closing .vnct-fab-menu__item:nth-child(2) { animation-delay: 0.04s; }
+.vnct-fab-menu--closing .vnct-fab-menu__item:nth-child(1) { animation-delay: 0.08s; }
+
+.vnct-fab-menu__item {
+  background: var(--bg-glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-5); color: var(--text-primary);
+  font-family: var(--font-family); font-size: var(--text-sm); font-weight: var(--font-medium);
+  cursor: pointer; transition: all 0.3s ease; white-space: nowrap;
+  text-align: left; display: flex; align-items: center; justify-content: flex-start;
+  gap: var(--space-3);
+  animation: vnct-fab-item-in var(--duration-normal) var(--ease-spring) backwards;
+}
+.vnct-fab-menu__item:nth-child(1) { animation-delay: 0.06s; }
+.vnct-fab-menu__item:nth-child(2) { animation-delay: 0.12s; }
+.vnct-fab-menu__item:nth-child(3) { animation-delay: 0.18s; }
+.vnct-fab-menu__item:hover { border-color: var(--accent); box-shadow: var(--neon-shadow-sm); }
+.vnct-fab-menu__icon { font-size: var(--text-base); line-height: 1; flex-shrink: 0; }
+
+.vnct-fab-overlay {
+  position: fixed; inset: 0; z-index: 898;
+  background: rgba(0, 0, 0, 0.3); animation: vnct-fade-in var(--duration-fast) ease;
+}
+.vnct-fab-overlay[aria-hidden="true"] { display: none; }
+
+/* Modal */
+.vnct-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  z-index: 1000; display: flex; align-items: center; justify-content: center;
+  animation: vnct-fade-in var(--duration-fast) ease;
+}
+.vnct-modal-overlay[aria-hidden="true"],
+.vnct-modal-overlay.vnct-modal-overlay--closing { animation: vnct-fade-out var(--duration-fast) ease forwards; }
+
+.vnct-modal {
+  background: var(--bg-secondary); border: 1.5px solid var(--accent);
+  border-radius: var(--radius-xl); padding: var(--space-8);
+  max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto;
+  animation: vnct-scale-in var(--duration-normal) var(--ease-spring);
+  box-shadow: var(--neon-shadow-lg);
+}
+.vnct-modal__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-6); }
+.vnct-modal__title { font-size: var(--text-xl); font-weight: var(--font-semibold); color: var(--text-primary); }
+.vnct-modal__close {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent; color: var(--text-secondary); cursor: pointer;
+  border-radius: var(--radius-sm); font-size: var(--text-lg);
+}
+.vnct-modal__close:hover { color: var(--text-primary); background: var(--surface-hover); }
+.vnct-modal__body { font-size: var(--text-base); color: var(--text-primary); line-height: 1.5; }
+
+/* Mobile modal */
+@media (max-width: 768px) {
+  .vnct-modal-overlay { align-items: center; padding: var(--space-4); }
+  .vnct-modal { width: 90%; max-height: 80vh; border-radius: var(--radius-xl); padding: var(--space-6); font-size: var(--text-sm); }
+  .vnct-modal__title { font-size: var(--text-lg); }
+  .vnct-modal__body { font-size: var(--text-sm); }
+  .vnct-modal__body h4 { font-size: var(--text-base); }
+  .vnct-modal__body p { font-size: var(--text-sm); }
+  .vnct-fab { bottom: calc(var(--space-6) + env(safe-area-inset-bottom)); }
+  .vnct-fab-menu { bottom: calc(56px + var(--space-8) + env(safe-area-inset-bottom)); }
+  .vnct-fab-menu__item { min-height: 44px; }
+}
+
+/* Version badge */
+.vnct-version-badge {
+  position: fixed; bottom: var(--space-2); left: var(--space-3);
+  font-size: var(--text-xs); color: var(--text-muted);
+  font-family: var(--font-family); z-index: 1; opacity: 0.6;
+  user-select: none;
+}
+
+/* Bouton VNCT */
+.vnct-btn { font-family: var(--font-family); font-size: var(--text-sm); font-weight: var(--font-semibold); padding: var(--space-3) var(--space-6); border-radius: var(--radius-md); border: 1px solid transparent; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); text-decoration: none; line-height: 1; transition: all 0.3s ease; }
+.vnct-btn--primary { background: var(--accent); color: #000; border-color: var(--accent); }
+.vnct-btn--primary:hover { box-shadow: var(--neon-shadow-md); filter: brightness(1.1); }
+.vnct-btn--primary:active { filter: brightness(0.95); transform: scale(0.96); }
+
+/* Toasts */
+.vnct-toast-container { position: fixed; z-index: 2000; display: flex; flex-direction: column; gap: var(--space-3); pointer-events: none; top: var(--space-6); right: var(--space-6); max-width: 400px; }
+.vnct-toast { font-family: var(--font-family); font-size: var(--text-sm); padding: var(--space-4) var(--space-6); background: var(--bg-glass); backdrop-filter: blur(12px); border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-primary); pointer-events: auto; display: flex; align-items: center; gap: var(--space-3); }
+.vnct-toast--success { border-left: 3px solid #30d060; }
+.vnct-toast--error { border-left: 3px solid #f04050; }
+
+/* Keyframes */
+@keyframes vnct-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes vnct-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes vnct-scale-in { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes vnct-fab-item-in { from { opacity: 0; transform: translateY(8px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes vnct-fab-item-out { to { opacity: 0; transform: translateY(8px) scale(0.95); } }
+@keyframes vnct-fab-menu-out { to { opacity: 0; transform: scale(0.95); } }
+
+/* Upload / Drop zone */
+.vnct-upload { position: relative; }
+.vnct-upload__input { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+.vnct-upload__dropzone {
+  display: flex; align-items: center; justify-content: center; gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--bg-tertiary); border: 2px dashed var(--border-default); border-radius: var(--radius-md);
+  cursor: pointer; transition: border-color 0.3s ease, background 0.3s ease;
+}
+.vnct-upload__dropzone:hover { border-color: var(--accent); }
+.vnct-upload__dropzone--dragover { border-color: var(--accent); background: rgba(255,255,255,.03); }
+.vnct-upload__icon { width: 24px; height: 24px; color: var(--text-muted); flex-shrink: 0; }
+.vnct-upload__text { font-size: var(--text-sm); color: var(--text-secondary); font-weight: var(--font-medium); }
+.vnct-upload__gallery { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+.vnct-upload__gallery:empty { display: none; }
+.vnct-upload__preview { position: relative; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-2); width: 120px; height: 90px; overflow: hidden; }
+.vnct-upload__img { max-width: 100%; max-height: 100%; border-radius: var(--radius-sm); object-fit: contain; }
+.vnct-upload__remove { position: absolute; top: var(--space-2); right: var(--space-2); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-full); font-size: var(--text-lg); line-height: 1; cursor: pointer; transition: all 0.2s ease; }
+.vnct-upload__remove:hover { background: #f04050; color: #fff; border-color: #f04050; }
+[data-theme="light"] .vnct-upload__dropzone { background: rgba(0,0,0,.02); }
+[data-theme="light"] .vnct-upload__dropzone--dragover { background: rgba(0,180,200,.05); }
+[data-theme="light"] .vnct-upload__preview { background: rgba(0,0,0,.02); }
+
+/* Inputs VNCT pour les modals */
+.vnct-textarea, .vnct-input {
+  font-family: var(--font-family); font-size: var(--text-base); padding: var(--space-3) var(--space-4);
+  background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-default);
+  border-radius: var(--radius-md); outline: none; width: 100%;
+}
+.vnct-textarea { min-height: 100px; resize: vertical; }
+.vnct-textarea:focus, .vnct-input:focus { border-color: var(--accent); box-shadow: var(--neon-shadow-sm); }
+.vnct-label { font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--text-secondary); margin-bottom: var(--space-2); display: block; }

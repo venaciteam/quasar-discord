@@ -1,0 +1,51 @@
+// Charger .env manuellement (pas besoin de dotenv)
+const fs = require('fs');
+const path = require('path');
+const envPath = path.join(__dirname, '.env');
+if (fs.existsSync(envPath)) {
+    fs.readFileSync(envPath, 'utf8').split('\n').forEach(line => {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) return;
+        const eqIndex = trimmed.indexOf('=');
+        if (eqIndex === -1) return;
+        const key = trimmed.slice(0, eqIndex).trim();
+        const val = trimmed.slice(eqIndex + 1).trim();
+        if (!process.env[key]) process.env[key] = val;
+    });
+}
+
+const { createBot } = require('./bot');
+const { createApi } = require('./api');
+
+const PORT = process.env.PORT || 3050;
+
+async function main() {
+    console.log('╔══════════════════════════════════╗');
+    console.log('║        ⚛  Atom Bot v0.1.0       ║');
+    console.log('╚══════════════════════════════════╝');
+
+    // Créer et démarrer le bot Discord
+    const client = createBot();
+    await client.login(process.env.DISCORD_TOKEN);
+
+    // Créer et démarrer l'API + dashboard
+    const app = createApi(client);
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`[Atom] Dashboard: http://localhost:${PORT}`);
+
+        // Afficher l'URL réseau local
+        const nets = require('os').networkInterfaces();
+        for (const iface of Object.values(nets)) {
+            for (const addr of iface) {
+                if (addr.family === 'IPv4' && !addr.internal) {
+                    console.log(`[Atom] Réseau local: http://${addr.address}:${PORT}`);
+                }
+            }
+        }
+    });
+}
+
+main().catch(err => {
+    console.error('[Atom] Erreur fatale:', err);
+    process.exit(1);
+});

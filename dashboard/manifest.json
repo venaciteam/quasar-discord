@@ -1,0 +1,18 @@
+{
+  "name": "Atom Dashboard",
+  "short_name": "Atom",
+  "description": "Bot Discord custom — dashboard de configuration",
+  "start_url": "/dashboard/app.html",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#c86e8e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/dashboard/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

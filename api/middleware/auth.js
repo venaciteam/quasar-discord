@@ -1,0 +1,56 @@
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'atom-secret';
+
+function generateToken(user) {
+    return jwt.sign({
+        id: user.id,
+        username: user.username,
+        avatar: user.avatar,
+        guilds: user.guilds
+    }, JWT_SECRET, { expiresIn: '7d' });
+}
+
+function verifyToken(token) {
+    try {
+        return jwt.verify(token, JWT_SECRET);
+    } catch {
+        return null;
+    }
+}
+
+function requireAuth(req, res, next) {
+    const token = req.cookies?.token
+        || req.headers.authorization?.replace('Bearer ', '')
+        || req.query.token;
+    if (!token) {
+        return res.status(401).json({ error: 'Non authentifié' });
+    }
+
+    const user = verifyToken(token);
+    if (!user) {
+        return res.status(401).json({ error: 'Token invalide' });
+    }
+
+    req.user = user;
+    next();
+}
+
+function requireGuildAdmin(req, res, next) {
+    const guildId = req.params.guildId;
+    const guild = req.user.guilds?.find(g => g.id === guildId);
+
+    if (!guild) {
+        return res.status(403).json({ error: 'Accès refusé' });
+    }
+
+    // Permission ADMINISTRATOR = 0x8
+    const isAdmin = (BigInt(guild.permissions) & BigInt(0x8)) === BigInt(0x8);
+    if (!isAdmin) {
+        return res.status(403).json({ error: 'Permissions insuffisantes' });
+    }
+
+    next();
+}
+
+module.exports = { generateToken, verifyToken, requireAuth, requireGuildAdmin };

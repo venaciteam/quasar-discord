@@ -1,0 +1,19 @@
+services:
+  atom:
+    build: .
+    container_name: atom
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3050}:${PORT:-3050}"
+    volumes:
+      - atom-data:/app/data
+    env_file: .env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  atom-data:
+    external: true
