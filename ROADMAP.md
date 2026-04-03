@@ -9,13 +9,15 @@
 - [ ] Tests sur Raspberry Pi 4
 - [ ] Changelog / release notes
 
-## v0.2.0 — Auto-update
+## v0.2.0 — Auto-update ✅
 
-- [ ] Endpoint `/api/version` — version locale (package.json) + derniere release GitHub
-- [ ] Check periodique (toutes les 12h ou au login dashboard)
-- [ ] Bandeau notification dans le dashboard quand une mise a jour est dispo
-- [ ] Bouton "Mettre a jour" avec log temps reel
-- [ ] Rollback automatique si le build echoue
+- [x] Endpoint `/api/version` — version locale (package.json) + derniere release GitHub
+- [x] Check periodique (toutes les 12h ou au login dashboard)
+- [x] Bandeau notification dans le dashboard quand une mise a jour est dispo
+- [x] Bouton "Mettre a jour" avec log temps reel (SSE)
+- [x] Rollback automatique si le build echoue
+- [x] Page "Mise a jour" dans le dashboard (sidebar Systeme)
+- [x] Support Docker (socket + host mount) et natif (git pull + npm ci)
 
 ## Ideas
 

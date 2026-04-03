@@ -19,6 +19,7 @@
 | 🎵 **Musique** | Play depuis YouTube, Spotify, Apple Music, Deezer et + |
 | 🔊 **TempVoice** | Salons vocaux temporaires avec boutons interactifs |
 | 🌐 **Dashboard Web** | Tout configurer depuis un navigateur — thème clair/sombre |
+| ⬆ **Auto-update** | Mise à jour en un clic depuis le dashboard avec logs temps réel |
 
 ---
 
@@ -199,6 +200,16 @@ curl -sSL https://raw.githubusercontent.com/venaciteam/atom-discord/main/install
 | `/ping` | Latence du bot |
 
 </details>
+
+---
+
+## ⬆ Mise à jour
+
+Atom vérifie automatiquement les nouvelles versions sur GitHub. Quand une mise à jour est disponible, un bandeau apparaît dans le dashboard. Clique sur "Mettre à jour" pour lancer le processus avec un terminal temps réel. En cas d'échec, un rollback automatique restaure la version précédente.
+
+Le système supporte les deux modes de déploiement :
+- **Docker** : git pull + rebuild image + restart container
+- **Natif** : git pull + npm ci + restart process
 
 ---
 

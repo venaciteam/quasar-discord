@@ -680,6 +680,7 @@ a:hover {
 }
 
 .btn-primary:hover {
+    background: var(--primary-rose);
     filter: brightness(1.1);
     box-shadow: 0 0 12px rgba(200, 110, 142, 0.4);
 }
