@@ -10,6 +10,7 @@ const embedsRoutes = require('./routes/embeds');
 const customcmdsRoutes = require('./routes/customcmds');
 const tempvoiceRoutes = require('./routes/tempvoice');
 const ticketsRoutes = require('./routes/tickets');
+const updateRoutes = require('./routes/update');
 
 function createApi(discordClient) {
     const app = express();
@@ -47,6 +48,7 @@ function createApi(discordClient) {
     app.use('/api/guilds/:guildId/customcmds', customcmdsRoutes);
     app.use('/api/guilds/:guildId/tempvoice', tempvoiceRoutes);
     app.use('/api/guilds/:guildId/tickets', ticketsRoutes);
+    app.use('/api', updateRoutes);
 
     // Dashboard static files (ETag + no-cache for mutable assets)
     app.use('/dashboard', express.static(path.join(__dirname, '..', 'dashboard'), {

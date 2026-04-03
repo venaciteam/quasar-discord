@@ -1,6 +1,6 @@
 # ⚛ Atom — Roadmap
 
-## v1.0.0 — Release publique ✅
+## v0.1.0 — Release publique ✅
 
 - [x] Repo GitHub public
 - [x] One-liner install : `curl -sSL https://raw.githubusercontent.com/venaciteam/atom-discord/main/install.sh | bash`
@@ -9,7 +9,7 @@
 - [ ] Tests sur Raspberry Pi 4
 - [ ] Changelog / release notes
 
-## v1.1.0 — Auto-update
+## v0.2.0 — Auto-update
 
 - [ ] Endpoint `/api/version` — version locale (package.json) + derniere release GitHub
 - [ ] Check periodique (toutes les 12h ou au login dashboard)

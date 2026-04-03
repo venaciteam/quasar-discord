@@ -77,6 +77,38 @@ async function init() {
     }
 
     selectGuild(guilds[0]);
+    checkForUpdate();
+}
+
+async function checkForUpdate() {
+    try {
+        const data = await API.get('/api/version?force=true');
+        // Afficher la version dans le bouton sidebar
+        const sidebarBtn = document.getElementById('sidebar-update');
+        if (sidebarBtn) {
+            const badge = data.updateAvailable ? `<span class="update-dot"></span>` : '';
+            sidebarBtn.innerHTML = `<span class="sidebar-link-icon">⬆</span> Mise à jour ${badge}<span style="margin-left:auto;font-size:.7rem;opacity:.5">v${data.local}</span>`;
+        }
+        if (data?.updateAvailable) showUpdateBanner(data.local, data.remote);
+    } catch {}
+}
+
+function showUpdateBanner(local, remote) {
+    if (document.getElementById('update-banner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'update-banner';
+    banner.className = 'update-banner';
+    banner.innerHTML = `
+        <span class="update-banner-icon">⬆</span>
+        <div style="flex:1">
+            <strong>Mise à jour disponible</strong>
+            <p>v${local} → v${remote}</p>
+        </div>
+        <button class="btn btn-primary" onclick="loadPage('update')" style="flex-shrink:0;font-size:.8rem;padding:.4rem .8rem">Mettre à jour</button>
+    `;
+    const main = document.querySelector('.main');
+    const content = document.getElementById('content');
+    if (main && content) main.insertBefore(banner, content);
 }
 
 function renderUserInfo() {
@@ -144,6 +176,7 @@ async function loadPage(page) {
         case 'tempvoice':  await loadTempVoice(content, currentGuild.id); content.insertAdjacentHTML('afterbegin', getMobileBackHtml()); break;
         case 'tickets':    await loadTickets(content, currentGuild.id); content.insertAdjacentHTML('afterbegin', getMobileBackHtml()); break;
         case 'music':      loadMusic(content); content.insertAdjacentHTML('afterbegin', getMobileBackHtml()); break;
+        case 'update':     await loadUpdate(content); content.insertAdjacentHTML('afterbegin', getMobileBackHtml()); break;
         default:
             content.innerHTML = `<div class="main-header"><h1 class="main-title">${page}</h1><p class="main-subtitle">Module en construction 🔧</p></div>`;
     }

@@ -16,12 +16,14 @@ if (fs.existsSync(envPath)) {
 
 const { createBot } = require('./bot');
 const { createApi } = require('./api');
+const { startPeriodicCheck } = require('./api/services/updater');
 
 const PORT = process.env.PORT || 3050;
 
 async function main() {
+    const version = require('./package.json').version;
     console.log('╔══════════════════════════════════╗');
-    console.log('║        ⚛  Atom Bot v0.1.0       ║');
+    console.log(`║        ⚛  Atom Bot v${version.padEnd(12)}║`);
     console.log('╚══════════════════════════════════╝');
 
     // Créer et démarrer le bot Discord
@@ -42,6 +44,9 @@ async function main() {
                 }
             }
         }
+
+        // Check de mise à jour en arrière-plan (30s après le boot)
+        setTimeout(() => startPeriodicCheck(), 30000);
     });
 }
 
