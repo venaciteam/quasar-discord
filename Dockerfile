@@ -11,13 +11,12 @@ RUN npm ci --omit=dev && rm -rf /root/.npm
 
 COPY . .
 
-# Utilisateur non-root + permissions + groupe docker pour l'auto-update
-RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001 \
-    && (addgroup -g 999 -S docker 2>/dev/null || true) \
-    && (addgroup nodejs docker 2>/dev/null || true) \
-    && chown -R nodejs:nodejs /app \
+# Permissions : user node (UID 1000, existe dans node:22-alpine)
+RUN (addgroup -g 999 -S docker 2>/dev/null || true) \
+    && (addgroup node docker 2>/dev/null || true) \
+    && chown -R node:node /app \
     && git config --system --add safe.directory '*'
-USER nodejs
+USER node
 
 EXPOSE 3050
 

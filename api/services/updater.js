@@ -213,21 +213,25 @@ async function runDockerUpdate(env, onLog) {
 
         // Rebuild Docker image
         onLog('status', 'Reconstruction de l\'image Docker...');
-        await spawnStep('docker', ['compose', '-f', `${hostDir}/docker-compose.yml`, 'build'], { cwd: hostDir }, onLog);
+        const containerName = process.env.HOSTNAME || 'atom';
+        // Trouver le nom de l'image du container actuel
+        const imageName = execSync(`docker inspect --format='{{.Config.Image}}' ${containerName}`, { cwd: hostDir }).toString().trim();
+        await spawnStep('docker', ['build', '-t', imageName, hostDir], { cwd: hostDir }, onLog);
 
-        // Restart container (va remplacer le container actuel)
+        // Restart container avec la nouvelle image
         onLog('status', 'Redémarrage du container...');
         onLog('done', 'Image reconstruite. Le container redémarre...');
 
         // Laisser le SSE envoyer, puis relancer
         setTimeout(() => {
             updating = false;
-            const up = spawn('docker', ['compose', '-f', `${hostDir}/docker-compose.yml`, 'up', '-d'], {
+            // Stop + remove + recreate avec les mêmes params
+            const restart = spawn('sh', ['-c', `docker stop ${containerName} && docker rm ${containerName} && docker run -d --name ${containerName} --restart unless-stopped --env-file ${hostDir}/.env -e ATOM_HOST_DIR=/host-app -p \${PORT:-3050}:\${PORT:-3050} -v atom-data:/app/data -v /var/run/docker.sock:/var/run/docker.sock -v ${hostDir}:/host-app --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 ${imageName}`], {
                 cwd: hostDir,
                 stdio: 'ignore',
                 detached: true
             });
-            up.unref();
+            restart.unref();
         }, 1500);
 
     } catch (err) {
