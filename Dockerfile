@@ -1,7 +1,7 @@
 FROM node:22-alpine
 
-# ffmpeg + python + yt-dlp (pip pour compatibilité ARM/x86)
-RUN apk add --no-cache ffmpeg python3 py3-pip make g++ git docker-cli \
+# ffmpeg + python + yt-dlp + git + docker (cli + compose plugin)
+RUN apk add --no-cache ffmpeg python3 py3-pip make g++ git docker-cli docker-cli-compose \
     && pip install --break-system-packages yt-dlp
 
 WORKDIR /app
@@ -11,9 +11,12 @@ RUN npm ci --omit=dev && rm -rf /root/.npm
 
 COPY . .
 
-# Permissions : user node (UID 1000, existe dans node:22-alpine)
-RUN (addgroup -g 999 -S docker 2>/dev/null || true) \
-    && (addgroup node docker 2>/dev/null || true) \
+# User node (UID 1000) existe dans node:22-alpine — match le user host
+# Groupe docker pour accéder au socket Docker monté
+# Le GID est défini via DOCKER_GID au build (défaut: 972)
+ARG DOCKER_GID=972
+RUN addgroup -g ${DOCKER_GID} -S docker \
+    && addgroup node docker \
     && chown -R node:node /app \
     && git config --system --add safe.directory '*'
 USER node

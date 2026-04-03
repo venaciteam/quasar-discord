@@ -10,13 +10,14 @@ const GITHUB_REPO = 'venaciteam/atom-discord';
 const CHECK_INTERVAL = 12 * 60 * 60 * 1000; // 12h
 const GITHUB_TIMEOUT = 10000; // 10s
 
-let versionCache = null; // { local, remote, releaseUrl, checkedAt }
+let versionCache = null;
 let updating = false;
 let periodicTimer = null;
 
 // ═══ Helpers ═══
 
 function getLocalVersion() {
+    // Pas de require() — on veut toujours la valeur fraiche du fichier
     const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf8'));
     return pkg.version;
 }
@@ -30,12 +31,14 @@ function getEnvironment() {
 
     const hostDir = process.env.ATOM_HOST_DIR;
     const socketOk = fs.existsSync('/var/run/docker.sock');
+    const composeFile = hostDir ? fs.existsSync(path.join(hostDir, 'docker-compose.yml')) : false;
 
     return {
         type: 'docker',
-        ready: !!(hostDir && socketOk),
+        ready: !!(hostDir && socketOk && composeFile),
         hostDir: hostDir || null,
-        socketOk
+        socketOk,
+        composeFile
     };
 }
 
@@ -61,7 +64,6 @@ async function fetchLatestRelease() {
             signal: controller.signal
         });
 
-        if (res.status === 404) return null; // pas encore de release
         if (!res.ok) return null;
 
         const data = await res.json();
@@ -150,41 +152,25 @@ async function runNativeUpdate(onLog) {
     let previousCommit;
 
     try {
-        // Sauvegarder le commit actuel pour rollback
         previousCommit = execSync('git rev-parse HEAD', { cwd: appDir }).toString().trim();
         onLog('status', 'Mise à jour du code source...');
 
-        // git pull --ff-only (safe, pas de merge)
         await spawnStep('git', ['pull', '--ff-only', 'origin', 'main'], { cwd: appDir }, onLog);
 
-        // npm ci
         onLog('status', 'Installation des dépendances...');
         await spawnStep('npm', ['ci', '--omit=dev'], { cwd: appDir }, onLog);
 
         onLog('status', 'Redémarrage...');
         onLog('done', 'Mise à jour terminée. Atom redémarre...');
 
-        // Laisser le temps au SSE d'envoyer le dernier message
         setTimeout(() => {
             updating = false;
-            process.exit(0); // le process manager (systemd/pm2) redémarre
+            process.exit(0);
         }, 1500);
 
     } catch (err) {
         onLog('error', `Erreur : ${err.message}`);
-
-        // Rollback
-        if (previousCommit) {
-            onLog('status', 'Rollback en cours...');
-            try {
-                await spawnStep('git', ['reset', '--hard', previousCommit], { cwd: appDir }, onLog);
-                await spawnStep('npm', ['ci', '--omit=dev'], { cwd: appDir }, onLog);
-                onLog('log', 'Rollback terminé — version précédente restaurée.');
-            } catch (rbErr) {
-                onLog('error', `Erreur pendant le rollback : ${rbErr.message}`);
-            }
-        }
-
+        await rollbackGit(previousCommit, appDir, onLog);
         onLog('fail', 'Mise à jour échouée. Rollback appliqué.');
         updating = false;
     }
@@ -193,8 +179,9 @@ async function runNativeUpdate(onLog) {
 async function runDockerUpdate(env, onLog) {
     if (!env.ready) {
         onLog('error', 'Configuration Docker incomplète.');
-        if (!env.hostDir) onLog('error', 'Variable ATOM_HOST_DIR manquante (montez le source host dans docker-compose.yml).');
-        if (!env.socketOk) onLog('error', 'Docker socket non monté (/var/run/docker.sock).');
+        if (!env.hostDir) onLog('error', 'ATOM_HOST_DIR manquant — montez le source dans docker-compose.yml');
+        if (!env.socketOk) onLog('error', 'Docker socket non monté (/var/run/docker.sock)');
+        if (!env.composeFile) onLog('error', 'docker-compose.yml introuvable dans le répertoire monté');
         onLog('fail', 'Impossible de lancer la mise à jour.');
         updating = false;
         return;
@@ -204,66 +191,61 @@ async function runDockerUpdate(env, onLog) {
     let previousCommit;
 
     try {
-        // Sauvegarder le commit actuel
+        // 1. Sauvegarder le commit actuel pour rollback
         previousCommit = execSync('git rev-parse HEAD', { cwd: hostDir }).toString().trim();
         onLog('status', 'Mise à jour du code source...');
 
-        // git pull sur le source host monté
+        // 2. Pull le code source
         await spawnStep('git', ['pull', '--ff-only', 'origin', 'main'], { cwd: hostDir }, onLog);
 
-        // Rebuild Docker image
+        // 3. Rebuild l'image via docker compose
         onLog('status', 'Reconstruction de l\'image Docker...');
-        const containerName = process.env.HOSTNAME || 'atom';
-        // Trouver le nom de l'image du container actuel
-        const imageName = execSync(`docker inspect --format='{{.Config.Image}}' ${containerName}`, { cwd: hostDir }).toString().trim();
-        await spawnStep('docker', ['build', '-t', imageName, hostDir], { cwd: hostDir }, onLog);
+        await spawnStep('docker', ['compose', 'build', '--no-cache'], { cwd: hostDir }, onLog);
 
-        // Restart container avec la nouvelle image
+        // 4. Relancer le container (va remplacer celui en cours)
         onLog('status', 'Redémarrage du container...');
         onLog('done', 'Image reconstruite. Le container redémarre...');
 
-        // Laisser le SSE envoyer, puis relancer
+        // On laisse le SSE envoyer le dernier message, puis on relance
+        // docker compose up -d va stop l'ancien container et en créer un nouveau
         setTimeout(() => {
             updating = false;
-            // Stop + remove + recreate avec les mêmes params
-            const restart = spawn('sh', ['-c', `docker stop ${containerName} && docker rm ${containerName} && docker run -d --name ${containerName} --restart unless-stopped --env-file ${hostDir}/.env -e ATOM_HOST_DIR=/host-app -p \${PORT:-3050}:\${PORT:-3050} -v atom-data:/app/data -v /var/run/docker.sock:/var/run/docker.sock -v ${hostDir}:/host-app --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 ${imageName}`], {
+            const up = spawn('docker', ['compose', 'up', '-d', '--force-recreate'], {
                 cwd: hostDir,
                 stdio: 'ignore',
                 detached: true
             });
-            restart.unref();
+            up.unref();
         }, 1500);
 
     } catch (err) {
         onLog('error', `Erreur : ${err.message}`);
-
-        // Rollback
-        if (previousCommit) {
-            onLog('status', 'Rollback en cours...');
-            try {
-                await spawnStep('git', ['reset', '--hard', previousCommit], { cwd: hostDir }, onLog);
-                onLog('log', 'Code source restauré.');
-            } catch (rbErr) {
-                onLog('error', `Erreur pendant le rollback : ${rbErr.message}`);
-            }
-        }
-
+        await rollbackGit(previousCommit, hostDir, onLog);
         onLog('fail', 'Mise à jour échouée. Rollback appliqué.');
         updating = false;
+    }
+}
+
+async function rollbackGit(commitHash, dir, onLog) {
+    if (!commitHash) return;
+    onLog('status', 'Rollback en cours...');
+    try {
+        await spawnStep('git', ['reset', '--hard', commitHash], { cwd: dir }, onLog);
+        onLog('log', 'Code source restauré à la version précédente.');
+    } catch (rbErr) {
+        onLog('error', `Erreur pendant le rollback : ${rbErr.message}`);
     }
 }
 
 // ═══ Periodic Check ═══
 
 function startPeriodicCheck() {
-    // Check initial
     checkVersion().then(result => {
         if (result?.updateAvailable) {
             console.log(`[Atom] Mise à jour disponible : v${result.local} → v${result.remote}`);
         }
     }).catch(() => {});
 
-    // Check toutes les 12h
     periodicTimer = setInterval(() => {
         checkVersion(true).catch(() => {});
     }, CHECK_INTERVAL);
