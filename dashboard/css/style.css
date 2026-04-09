@@ -596,7 +596,7 @@ a:hover {
     transform: translateX(20px);
 }
 
-/* Select — styled dark/light */
+/* Select — styled dark/light (legacy, kept for other modules) */
 .select {
     width: 100%;
     padding: 0.6rem 1rem;
@@ -623,6 +623,112 @@ a:hover {
 .select:focus {
     border-color: var(--primary-rose);
     outline: none;
+}
+
+/* ═══ Custom Select — Presence dropdowns ═══ */
+.custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.custom-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: var(--select-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+    outline: none;
+}
+
+.custom-select-trigger:hover {
+    border-color: var(--primary-blue);
+}
+
+.custom-select-trigger:focus-visible {
+    border-color: var(--primary-rose);
+    box-shadow: 0 0 0 2px var(--primary-rose-dim);
+}
+
+.custom-select.open .custom-select-trigger {
+    border-color: var(--primary-rose);
+    box-shadow: 0 0 0 2px var(--primary-rose-dim);
+}
+
+.custom-select-chevron {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.custom-select.open .custom-select-chevron {
+    transform: rotate(180deg);
+    color: var(--primary-rose);
+}
+
+.custom-select-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.custom-select-options {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--select-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.3rem;
+    z-index: 200;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px) scale(0.98);
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.2s;
+    pointer-events: none;
+}
+
+.custom-select.open .custom-select-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.custom-select-option {
+    display: flex;
+    align-items: center;
+    padding: 0.55rem 0.75rem;
+    border-radius: calc(var(--radius-sm) - 2px);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    user-select: none;
+}
+
+.custom-select-option:hover {
+    background: var(--primary-rose-dim);
+    color: var(--primary-rose);
+}
+
+.custom-select-option.selected {
+    background: var(--primary-rose-dim);
+    color: var(--primary-rose);
+    font-weight: 500;
 }
 
 /* Input */
@@ -801,6 +907,35 @@ a:hover {
     color: var(--text-muted);
 }
 
+/* ═══ Presence card ═══ */
+.presence-card {
+    animation-delay: 50ms;
+}
+
+.presence-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.presence-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.presence-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+}
+
+.presence-field-btn {
+    padding-bottom: 1px;
+}
+
 /* Gradient accents */
 .gradient-text {
     background: linear-gradient(135deg, var(--primary-rose), var(--primary-blue));
@@ -935,6 +1070,14 @@ a:hover {
     /* Commandes block → une colonne */
     [style*="grid-template-columns:1fr 1fr"] {
         grid-template-columns: 1fr !important;
+    }
+
+    /* Presence grid responsive */
+    .presence-grid {
+        grid-template-columns: 1fr;
+    }
+    .presence-field-btn .btn {
+        width: 100%;
     }
 
     /* FAB — géré par vnct-fab-only.css */

@@ -19,6 +19,13 @@
 - [x] Page "Mise a jour" dans le dashboard (sidebar Systeme)
 - [x] Support Docker (socket + host mount) et natif (git pull + npm ci)
 
+## v0.2.1 — Gestion de la présence du bot
+
+- [x] Endpoint API `/api/presence` (GET + PUT, owner only)
+- [x] Configuration du statut (online, idle, dnd, invisible)
+- [x] Configuration de l'activité (Playing, Streaming, Listening, Watching, Competing)
+- [x] Application en temps réel sur le bot Discord
+
 ## Ideas
 
 - [ ] Systeme de plugins (modules activables/desactivables)

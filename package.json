@@ -1,6 +1,6 @@
 {
   "name": "atom-bot",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Atom — Bot Discord custom avec dashboard web",
   "main": "index.js",
   "scripts": {

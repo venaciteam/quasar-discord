@@ -53,4 +53,12 @@ function requireGuildAdmin(req, res, next) {
     next();
 }
 
-module.exports = { generateToken, verifyToken, requireAuth, requireGuildAdmin };
+function requireOwner(req, res, next) {
+    const ownerId = process.env.BOT_OWNER_ID;
+    if (!ownerId || req.user.id !== ownerId) {
+        return res.status(403).json({ error: 'Réservé au propriétaire du bot' });
+    }
+    next();
+}
+
+module.exports = { generateToken, verifyToken, requireAuth, requireGuildAdmin, requireOwner };

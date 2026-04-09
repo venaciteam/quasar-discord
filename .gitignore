@@ -5,6 +5,7 @@ data/
 *.bak
 *.broken
 .DS_Store
+._*
 Thumbs.db
 *.swp
 *.swo

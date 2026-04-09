@@ -51,6 +51,13 @@ if [ ! -f .env ]; then
     read -p "   Callback URL [http://localhost:${PORT}/callback] : " CALLBACK_URL
     CALLBACK_URL=${CALLBACK_URL:-http://localhost:${PORT}/callback}
 
+    echo ""
+    echo -e "   ${YELLOW}💡 Ton ID Discord permet d'accéder aux fonctions admin du dashboard"
+    echo -e "   (gestion du statut du bot, etc.). Pour le trouver :"
+    echo -e "   Discord → Paramètres → Avancés → Mode développeur → clic droit sur ton profil → Copier l'identifiant${NC}"
+    echo ""
+    read -p "   Ton ID Discord (optionnel, Entrée pour passer) : " BOT_OWNER_ID
+
     JWT_SECRET=$(openssl rand -hex 32)
 
     cp .env.example .env
@@ -60,6 +67,9 @@ if [ ! -f .env ]; then
     sed -i "s|CALLBACK_URL=.*|CALLBACK_URL=${CALLBACK_URL}|" .env
     sed -i "s|JWT_SECRET=.*|JWT_SECRET=${JWT_SECRET}|" .env
     sed -i "s|PORT=.*|PORT=${PORT}|" .env
+    if [ -n "$BOT_OWNER_ID" ]; then
+        sed -i "s|BOT_OWNER_ID=.*|BOT_OWNER_ID=${BOT_OWNER_ID}|" .env
+    fi
 
     echo ""
     echo -e "${GREEN}✅ Fichier .env créé${NC}"

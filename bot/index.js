@@ -207,8 +207,35 @@ function createBot() {
         // Déployer les commandes slash
         await deployCommands(client);
 
-        // Status custom
-        client.user.setActivity('app.vena.city', { type: 3 }); // Watching
+        // Charger la présence depuis la DB (ou fallback)
+        try {
+            const presence = db.prepare('SELECT * FROM bot_presence WHERE id = 1').get();
+            if (presence) {
+                if (presence.activity_type === -1) {
+                    // Aucune activité — statut uniquement
+                    client.user.setPresence({
+                        status: presence.status,
+                        activities: []
+                    });
+                    console.log(`[Atom] Présence chargée: ${presence.status} (aucune activité)`);
+                } else {
+                    client.user.setPresence({
+                        status: presence.status,
+                        activities: [{
+                            name: presence.activity_text,
+                            type: presence.activity_type
+                        }]
+                    });
+                    console.log(`[Atom] Présence chargée: ${presence.status} — ${presence.activity_text}`);
+                }
+            } else {
+                client.user.setActivity('app.vena.city', { type: 3 });
+                console.log('[Atom] Présence par défaut: Watching app.vena.city');
+            }
+        } catch (e) {
+            client.user.setActivity('app.vena.city', { type: 3 });
+            console.log('[Atom] Présence fallback (erreur DB):', e.message);
+        }
 
         // TempVoice — Charger les IDs actifs dans le Set (pour filtrage channelCreate/Delete)
         try {

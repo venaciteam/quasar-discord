@@ -180,6 +180,14 @@ function initTables() {
             created_at INTEGER DEFAULT (unixepoch())
         );
 
+        -- Présence du bot (config globale, une seule ligne)
+        CREATE TABLE IF NOT EXISTS bot_presence (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            status TEXT NOT NULL DEFAULT 'online',
+            activity_type INTEGER NOT NULL DEFAULT 3,
+            activity_text TEXT NOT NULL DEFAULT 'app.vena.city'
+        );
+
         -- Indexes pour les performances
         CREATE INDEX IF NOT EXISTS idx_sanctions_guild ON sanctions(guild_id);
         CREATE INDEX IF NOT EXISTS idx_sanctions_guild_user ON sanctions(guild_id, user_id);

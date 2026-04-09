@@ -182,8 +182,217 @@ async function loadPage(page) {
     }
 }
 
+// ═══ Présence du bot (owner only) ═══
+const STATUS_EMOJIS = { online: '🟢', idle: '🌙', dnd: '⛔', invisible: '👻' };
+const ACTIVITY_LABELS = { 0: 'Joue à', 2: 'Écoute', 3: 'Regarde', 5: 'En compétition sur' };
+let savingPresence = false;
+
+async function getPresenceHtml() {
+    try {
+        const data = await API.get('/api/presence');
+        if (!data || !data.isOwner) return '';
+
+        const statusOptions = [
+            { value: 'online', label: '🟢 En ligne' },
+            { value: 'idle', label: '🌙 Inactif' },
+            { value: 'dnd', label: '⛔ Ne pas déranger' },
+            { value: 'invisible', label: '👻 Invisible' }
+        ];
+        const activityOptions = [
+            { value: -1, label: 'Aucune' },
+            { value: 0, label: 'Joue à' },
+            { value: 2, label: 'Écoute' },
+            { value: 3, label: 'Regarde' },
+            { value: 5, label: 'En compétition sur' }
+        ];
+        const noActivity = data.activity_type === -1;
+
+        const selectedStatus = statusOptions.find(o => o.value === data.status) || statusOptions[0];
+        const selectedActivity = activityOptions.find(o => o.value === data.activity_type) || activityOptions[0];
+
+        return `
+            <div class="card presence-card">
+                <div class="card-title">
+                    <span id="presence-emoji">${STATUS_EMOJIS[data.status] || '🟢'}</span> Statut du bot
+                    <span class="badge badge-active" style="margin-left:auto">Owner</span>
+                </div>
+                <div class="presence-grid">
+                    <div class="presence-field">
+                        <label class="presence-label">Statut</label>
+                        <div class="custom-select" id="cs-presence-status">
+                            <input type="hidden" id="presence-status" value="${data.status}">
+                            <div class="custom-select-trigger" tabindex="0">
+                                <span class="custom-select-value">${selectedStatus.label}</span>
+                                <svg class="custom-select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                            </div>
+                            <div class="custom-select-options">
+                                ${statusOptions.map(o => `<div class="custom-select-option${o.value === data.status ? ' selected' : ''}" data-value="${o.value}">${o.label}</div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="presence-field">
+                        <label class="presence-label">Activité</label>
+                        <div class="custom-select" id="cs-presence-activity-type">
+                            <input type="hidden" id="presence-activity-type" value="${data.activity_type}">
+                            <div class="custom-select-trigger" tabindex="0">
+                                <span class="custom-select-value">${selectedActivity.label}</span>
+                                <svg class="custom-select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                            </div>
+                            <div class="custom-select-options">
+                                ${activityOptions.map(o => `<div class="custom-select-option${o.value === data.activity_type ? ' selected' : ''}" data-value="${o.value}">${o.label}</div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="presence-field presence-field-text">
+                        <label class="presence-label">Texte</label>
+                        <input type="text" class="input" id="presence-activity-text" maxlength="128" placeholder="app.vena.city" value="${data.activity_text.replace(/"/g, '&quot;')}" ${noActivity ? 'disabled style="opacity:.4"' : ''}>
+                    </div>
+                    <div class="presence-field presence-field-btn">
+                        <button class="btn btn-primary" id="presence-save">Appliquer</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    } catch {
+        return '';
+    }
+}
+
+// ═══ Custom Select Component ═══
+function initCustomSelects() {
+    document.querySelectorAll('.custom-select').forEach(wrapper => {
+        const trigger = wrapper.querySelector('.custom-select-trigger');
+        const options = wrapper.querySelector('.custom-select-options');
+        const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+
+        // Toggle open/close on click
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Close all other open selects
+            document.querySelectorAll('.custom-select.open').forEach(el => {
+                if (el !== wrapper) el.classList.remove('open');
+            });
+            wrapper.classList.toggle('open');
+        });
+
+        // Keyboard support
+        trigger.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                trigger.click();
+            } else if (e.key === 'Escape') {
+                wrapper.classList.remove('open');
+            }
+        });
+
+        // Option selection
+        wrapper.querySelectorAll('.custom-select-option').forEach(opt => {
+            opt.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const value = opt.dataset.value;
+                const label = opt.textContent;
+
+                // Update hidden input
+                hiddenInput.value = value;
+
+                // Update visual
+                wrapper.querySelector('.custom-select-value').textContent = label;
+                wrapper.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+
+                // Close dropdown
+                wrapper.classList.remove('open');
+
+                // Dispatch change event on hidden input for listeners
+                hiddenInput.dispatchEvent(new Event('change'));
+            });
+        });
+    });
+
+    // Close all selects when clicking outside
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.custom-select.open').forEach(el => el.classList.remove('open'));
+    });
+}
+
+function bindPresenceEvents() {
+    const saveBtn = document.getElementById('presence-save');
+    if (!saveBtn) return;
+
+    saveBtn.addEventListener('click', savePresence);
+
+    // Init custom selects
+    initCustomSelects();
+
+    // Mettre à jour l'emoji indicateur quand le statut change
+    const statusInput = document.getElementById('presence-status');
+    if (statusInput) {
+        statusInput.addEventListener('change', () => {
+            const emoji = document.getElementById('presence-emoji');
+            if (emoji) emoji.textContent = STATUS_EMOJIS[statusInput.value] || '🟢';
+        });
+    }
+
+    // Activer/désactiver le champ texte selon le type d'activité
+    const activityInput = document.getElementById('presence-activity-type');
+    const activityText = document.getElementById('presence-activity-text');
+    if (activityInput && activityText) {
+        activityInput.addEventListener('change', () => {
+            const none = activityInput.value === '-1';
+            activityText.disabled = none;
+            activityText.style.opacity = none ? '.4' : '1';
+        });
+    }
+}
+
+async function savePresence() {
+    if (savingPresence) return;
+    savingPresence = true;
+
+    const btn = document.getElementById('presence-save');
+    const originalText = btn.textContent;
+    btn.textContent = '...';
+    btn.disabled = true;
+
+    try {
+        const status = document.getElementById('presence-status').value;
+        const activityType = parseInt(document.getElementById('presence-activity-type').value);
+        const activityText = document.getElementById('presence-activity-text').value.trim();
+
+        if (!activityText) {
+            showToast('Le texte ne peut pas être vide', 'error');
+            return;
+        }
+
+        const result = await API.put('/api/presence', {
+            status,
+            activity_type: activityType,
+            activity_text: activityText
+        });
+
+        if (result.success) {
+            showToast('Statut du bot mis à jour');
+        } else {
+            showToast(result.error || 'Erreur', 'error');
+        }
+    } catch {
+        showToast('Erreur de connexion', 'error');
+    } finally {
+        setTimeout(() => {
+            savingPresence = false;
+            if (btn) {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }, 500);
+    }
+}
+
 async function loadOverview(container) {
-    const modules = await API.get(`/api/guilds/${currentGuild.id}/modules`) || {};
+    const [modules, presenceHtml] = await Promise.all([
+        API.get(`/api/guilds/${currentGuild.id}/modules`).then(m => m || {}),
+        getPresenceHtml()
+    ]);
 
     const moduleList = [
         { key: 'moderation', icon: '🛡️', name: 'Modération', desc: 'Warn, mute, kick, ban, logs automatiques', page: 'moderation' },
@@ -201,6 +410,7 @@ async function loadOverview(container) {
             <h1 class="main-title">Vue d'ensemble ✨</h1>
             <p class="main-subtitle">Gère les modules d'Atom sur ${currentGuild.name}</p>
         </div>
+        ${presenceHtml}
         <div class="modules-grid">
             ${moduleList.map((m, i) => {
                 const mod = modules[m.key];
@@ -220,6 +430,9 @@ async function loadOverview(container) {
             }).join('')}
         </div>
     `;
+
+    // Attacher les events de la section présence après insertion dans le DOM
+    bindPresenceEvents();
 }
 
 function loadMusic(container) {
