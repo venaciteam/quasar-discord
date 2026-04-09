@@ -202,16 +202,43 @@ async function runDockerUpdate(env, onLog) {
         onLog('status', 'Reconstruction de l\'image Docker...');
         await spawnStep('docker', ['compose', 'build', '--no-cache'], { cwd: hostDir }, onLog);
 
-        // 4. Relancer le container (va remplacer celui en cours)
+        // 4. Résoudre le chemin hôte réel du code source
+        //    (hostDir = /host-app dans le container, on a besoin du chemin sur l'hôte)
+        const hostPath = execSync(
+            "docker inspect --format '{{range .Mounts}}{{if eq .Destination \"/host-app\"}}{{.Source}}{{end}}{{end}}' atom",
+            { timeout: 5000 }
+        ).toString().trim();
+
+        if (!hostPath) {
+            throw new Error('Impossible de déterminer le chemin hôte du code source');
+        }
+
+        // 5. Récupérer le nom de l'image (qui vient d'être rebuild)
+        const atomImage = execSync(
+            "docker inspect --format '{{.Config.Image}}' atom",
+            { timeout: 5000 }
+        ).toString().trim();
+
         onLog('status', 'Redémarrage du container...');
         onLog('done', 'Image reconstruite. Le container redémarre...');
 
-        // On laisse le SSE envoyer le dernier message, puis on relance
-        // docker compose up -d va stop l'ancien container et en créer un nouveau
+        // 6. Lancer un container helper éphémère pour recréer le container principal.
+        //    On ne peut pas faire docker compose up depuis le container qu'on veut recréer :
+        //    l'arrêt du container tue le processus compose avant qu'il ne crée le nouveau.
+        //    Le helper survit à l'arrêt du container atom et termine la re-création.
         setTimeout(() => {
             updating = false;
-            const up = spawn('docker', ['compose', 'up', '-d', '--force-recreate'], {
-                cwd: hostDir,
+            try { execSync('docker rm -f atom-updater', { stdio: 'ignore' }); } catch {}
+
+            const up = spawn('docker', [
+                'run', '--rm', '-d',
+                '--name', 'atom-updater',
+                '-v', '/var/run/docker.sock:/var/run/docker.sock',
+                '-v', `${hostPath}:${hostPath}`,
+                '-w', hostPath,
+                atomImage,
+                'sh', '-c', 'sleep 2 && docker compose up -d --force-recreate'
+            ], {
                 stdio: 'ignore',
                 detached: true
             });
