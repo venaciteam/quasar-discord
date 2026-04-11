@@ -243,9 +243,13 @@
     _dismiss(toast) {
       if (!toast || !toast.parentNode) return;
       toast.classList.add('vnct-toast--closing');
-      toast.addEventListener('animationend', () => {
+      // Supprime le toast après l'animation de fermeture
+      // Fallback setTimeout au cas où animationend ne se déclenche pas
+      const remove = () => {
         if (toast.parentNode) toast.parentNode.removeChild(toast);
-      });
+      };
+      toast.addEventListener('animationend', remove, { once: true });
+      setTimeout(remove, 500);
     },
 
     _getIcon(type) {
@@ -895,107 +899,64 @@
   };
 
   /* ==========================================================================
-     8. WEBHOOK — Envoi vers Discord
+     8. DEVREPORT — Envoi vers le DevPortal (dev.vena.city)
      ========================================================================== */
 
   VNCT.Webhook = {
     /**
-     * Envoie un feedback (bug ou suggestion) au webhook Discord.
-     * Format embed unifié avec nom du service.
-     * Si des images sont jointes, utilise FormData multipart (payload_json + fichiers).
-     * Sinon, envoie en JSON simple (pas de régression).
-     * Discord limite à 10 fichiers par message.
+     * Envoie un feedback (bug ou suggestion) au DevPortal.
+     * Utilise l'API publique POST /api/public/report (multipart/form-data).
+     * Supporte les screenshots (max 10 fichiers, 12 Mo chacun).
      * @param {'bug'|'suggestion'} type
      * @param {Object} data — { description, steps?, contact?, screenshots? }
      */
     async sendFeedback(type, data) {
-      if (!VNCT.config.discordWebhookUrl) {
-        console.warn('[VNCT] Discord webhook URL not configured');
-        VNCT.Toast.error('Webhook non configuré.');
-        return false;
-      }
+      // Envoie via le relay local /api/feedback/vnct qui forward au DevPortal.
+      // Pas d'appel direct à dev.vena.city — évite les problèmes de CORS
+      // et permet à chaque instance Atom de remonter les reports.
+      const relayUrl = VNCT.config.discordWebhookUrl || '/api/feedback/vnct';
 
       const techInfo = VNCT.FAB._getTechInfo();
-      const colors = { bug: 0xf04050, suggestion: 0x30d060 };
-      const emojis = { bug: '🐛', suggestion: '✨' };
-      const titles = { bug: 'Signaler un bug', suggestion: 'Proposer une idée' };
-
-      const fields = [
-        { name: '📝 Description', value: data.description, inline: false },
-      ];
-
-      // Étapes pour reproduire (bug uniquement)
-      if (type === 'bug' && data.steps) {
-        fields.push({ name: '🔄 Étapes pour reproduire', value: data.steps, inline: false });
-      }
-
-      // Contact optionnel
-      if (data.contact) {
-        fields.push({ name: '📧 Contact', value: data.contact, inline: true });
-      }
-
-      // Infos techniques
-      fields.push(
-        { name: '🖥️ Plateforme', value: techInfo.platform, inline: true },
-        { name: '🌐 URL', value: window.location.href, inline: true },
-        { name: '🔧 Navigateur', value: navigator.userAgent.substring(0, 200), inline: false },
-      );
-
-      const embed = {
-        title: `${emojis[type]} ${titles[type]} — ${VNCT.config.serviceName}`,
-        color: colors[type] || 0x0dd4f0,
-        timestamp: new Date().toISOString(),
-        footer: {
-          text: `${VNCT.config.serviceName} v${VNCT.config.serviceVersion} | VNCT Design System v${VNCT.version}`,
-        },
-        fields,
-      };
-
       const screenshots = data.screenshots || [];
 
-      // Référencer la première image dans l'embed (affichée en grand)
-      // Discord utilise attachment://filename pour référencer les pièces jointes
-      if (screenshots.length > 0) {
-        embed.image = { url: 'attachment://screenshot-0.png' };
-      }
+      // Construction du FormData (multipart/form-data)
+      const formData = new FormData();
+      formData.append('type', type);
+      formData.append('service', VNCT.config.serviceName || 'Unknown');
+      formData.append('service_version', VNCT.config.serviceVersion || '');
+      formData.append('description', data.description);
+      if (data.steps) formData.append('steps', data.steps);
+      if (data.contact) formData.append('contact', data.contact);
+      formData.append('platform', techInfo.platform);
+      formData.append('browser', navigator.userAgent.substring(0, 200));
+      formData.append('url', window.location.href);
 
-      const payload = { embeds: [embed] };
+      // Screenshots (max 10, champ "screenshots" attendu par le DevPortal)
+      screenshots.slice(0, 10).forEach((file) => {
+        formData.append('screenshots', file, file.name || 'screenshot.png');
+      });
 
       try {
-        let res;
-
-        if (screenshots.length > 0) {
-          // Envoi multipart : payload_json (string) + fichiers
-          // Discord attend les noms fileN (file1, file2, ...)
-          const formData = new FormData();
-          formData.append('payload_json', JSON.stringify(payload));
-          screenshots.forEach((file, i) => {
-            formData.append(`file${i + 1}`, file, `screenshot-${i}.png`);
-          });
-          res = await fetch(VNCT.config.discordWebhookUrl, {
-            method: 'POST',
-            body: formData,
-          });
-        } else {
-          // Envoi JSON simple (comportement original)
-          res = await fetch(VNCT.config.discordWebhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-        }
+        const res = await fetch(relayUrl, {
+          method: 'POST',
+          body: formData,
+        });
 
         if (!res.ok) {
-          const text = await res.text();
-          console.error('[VNCT] Webhook error:', res.status, text);
-          VNCT.Toast.error('Erreur lors de l\'envoi. Réessayez plus tard.');
+          const body = await res.json().catch(() => ({}));
+          console.error('[VNCT] DevReport error:', res.status, body);
+          if (res.status === 429) {
+            VNCT.Toast.error('Trop de reports envoyés. Réessayez dans une minute.');
+          } else {
+            VNCT.Toast.error(body.error || 'Erreur lors de l\'envoi. Réessayez plus tard.');
+          }
           return false;
         }
 
         return true;
       } catch (err) {
-        console.error('[VNCT] Webhook error:', err);
-        VNCT.Toast.error('Erreur lors de l\'envoi. Réessayez plus tard.');
+        console.error('[VNCT] DevReport error:', err);
+        VNCT.Toast.error('Impossible de contacter le serveur. Réessayez plus tard.');
         return false;
       }
     },

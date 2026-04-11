@@ -23,20 +23,33 @@ function createApi(discordClient) {
     // Rendre le client Discord accessible aux routes
     app.set('discordClient', discordClient);
 
-    // Feedback webhook relay (bug reports / suggestions + VNCT design system)
+    // Feedback relay → DevPortal (dev.vena.city)
+    // Reçoit le multipart/form-data du FAB et le forward tel quel au DevPortal.
+    // Pas besoin de parser le body côté Atom — on pipe les chunks bruts.
+    const DEVREPORT_URL = 'https://dev.vena.city';
     app.post(['/api/feedback', '/api/feedback/vnct'], (req, res) => {
-        const webhookUrl = process.env.FEEDBACK_WEBHOOK_URL;
-        if (!webhookUrl) return res.status(503).json({ error: 'Feedback non configuré' });
-        const { embeds } = req.body;
-        if (!embeds || !Array.isArray(embeds)) return res.status(400).json({ error: 'Format invalide' });
-        fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ embeds: embeds.slice(0, 1) })
-        }).then(r => {
-            if (r.ok) res.json({ success: true });
-            else r.text().then(t => res.status(r.status).json({ error: t }));
-        }).catch(() => res.status(500).json({ error: 'Envoi échoué' }));
+        const chunks = [];
+        req.on('data', chunk => chunks.push(chunk));
+        req.on('end', async () => {
+            try {
+                const body = Buffer.concat(chunks);
+                const response = await fetch(`${DEVREPORT_URL}/api/public/report`, {
+                    method: 'POST',
+                    headers: { 'content-type': req.headers['content-type'] },
+                    body,
+                });
+                const data = await response.json().catch(() => ({}));
+                if (response.ok) {
+                    res.status(201).json(data);
+                } else {
+                    res.status(response.status).json(data);
+                }
+            } catch (err) {
+                console.error('[Atom] DevReport relay error:', err.message);
+                res.status(502).json({ error: 'Impossible de contacter le DevPortal' });
+            }
+        });
+        req.on('error', () => res.status(500).json({ error: 'Erreur de lecture' }));
     });
 
     // API routes

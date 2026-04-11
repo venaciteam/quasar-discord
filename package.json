@@ -1,6 +1,10 @@
 {
   "name": "atom-bot",
+<<<<<<< HEAD
   "version": "0.2.1",
+=======
+  "version": "0.2.2",
+>>>>>>> 10d9b25 (v0.2.2 — FAB reports via DevPortal, toast fix, preview README)
   "description": "Atom — Bot Discord custom avec dashboard web",
   "main": "index.js",
   "scripts": {

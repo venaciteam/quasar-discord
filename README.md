@@ -2,6 +2,8 @@
 
 > Toutes les fonctionnalités premium d'un bot Discord — modération, tickets, musique, reaction roles, embeds, TempVoice et dashboard web. 100% self-hosted, open source, 0 abonnement.
 
+![Atom Dashboard Preview](dashboard/img/preview.png)
+
 ---
 
 ## ✨ Features

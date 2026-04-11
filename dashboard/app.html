@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atom — Dashboard</title>
-    <link rel="stylesheet" href="/dashboard/css/style.css?v=29">
+    <link rel="stylesheet" href="/dashboard/css/style.css?v=0.2.2">
     <link rel="stylesheet" href="/dashboard/css/vnct-fab-only.css">
     <link rel="icon" type="image/x-icon" href="/dashboard/icon.ico">
     <link rel="icon" type="image/png" href="/dashboard/icon.png">
@@ -118,20 +118,21 @@
     <script src="/dashboard/js/vnct-common.js"></script>
     <script>
         VNCT.config.serviceName = 'Atom';
-        VNCT.config.serviceVersion = '0.2.0';
+        VNCT.config.serviceVersion = '0.2.2';
+        VNCT.config.devReportUrl = 'https://dev.vena.city';
         VNCT.config.discordWebhookUrl = '/api/feedback/vnct';
     </script>
-    <script src="/dashboard/js/utils.js?v=28"></script>
-    <script src="/dashboard/js/commandsBlock.js?v=28"></script>
-    <script src="/dashboard/js/pages/moderation.js?v=28"></script>
-    <script src="/dashboard/js/pages/welcome.js?v=28"></script>
-    <script src="/dashboard/js/pages/reactionroles.js?v=28"></script>
-    <script src="/dashboard/js/pages/embeds.js?v=28"></script>
-    <script src="/dashboard/js/pages/customcmds.js?v=28"></script>
-    <script src="/dashboard/js/pages/tempvoice.js?v=28"></script>
-    <script src="/dashboard/js/pages/tickets.js?v=28"></script>
-    <script src="/dashboard/js/pages/update.js?v=28"></script>
-    <script src="/dashboard/js/app.js?v=28"></script>
+    <script src="/dashboard/js/utils.js?v=0.2.2"></script>
+    <script src="/dashboard/js/commandsBlock.js?v=0.2.2"></script>
+    <script src="/dashboard/js/pages/moderation.js?v=0.2.2"></script>
+    <script src="/dashboard/js/pages/welcome.js?v=0.2.2"></script>
+    <script src="/dashboard/js/pages/reactionroles.js?v=0.2.2"></script>
+    <script src="/dashboard/js/pages/embeds.js?v=0.2.2"></script>
+    <script src="/dashboard/js/pages/customcmds.js?v=0.2.2"></script>
+    <script src="/dashboard/js/pages/tempvoice.js?v=0.2.2"></script>
+    <script src="/dashboard/js/pages/tickets.js?v=0.2.2"></script>
+    <script src="/dashboard/js/pages/update.js?v=0.2.2"></script>
+    <script src="/dashboard/js/app.js?v=0.2.2"></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/dashboard/sw.js').then(function(reg) {
