@@ -3,16 +3,54 @@ const path = require('path');
 
 const DB_PATH = path.join(__dirname, '..', '..', 'data', 'atom.db');
 
+// --- Intervalle de checkpoint WAL (5 minutes) ---
+const CHECKPOINT_INTERVAL = 5 * 60 * 1000;
+
 let db;
+let checkpointTimer = null;
 
 function getDb() {
     if (!db) {
         db = new Database(DB_PATH);
         db.pragma('journal_mode = WAL');
         db.pragma('foreign_keys = ON');
+        // Autocheckpoint : flush le WAL tous les 100 pages (~400KB)
+        db.pragma('wal_autocheckpoint = 100');
         initTables();
         migrateTempVoice();
         migrateTickets();
+
+        // --- Checkpoint périodique (toutes les 5 min) ---
+        checkpointTimer = setInterval(() => {
+            try {
+                db.pragma('wal_checkpoint(TRUNCATE)');
+                console.log('[Atom DB] Checkpoint WAL effectué');
+            } catch (err) {
+                console.error('[Atom DB] Erreur checkpoint WAL :', err.message);
+            }
+        }, CHECKPOINT_INTERVAL);
+        if (checkpointTimer.unref) checkpointTimer.unref();
+
+        // --- Graceful shutdown ---
+        const shutdown = (signal) => {
+            console.log(`[Atom DB] Signal ${signal} reçu, checkpoint final...`);
+            try {
+                if (checkpointTimer) clearInterval(checkpointTimer);
+                if (db && db.open) {
+                    db.pragma('wal_checkpoint(TRUNCATE)');
+                    db.close();
+                    console.log('[Atom DB] Base fermée proprement.');
+                }
+            } catch (err) {
+                console.error('[Atom DB] Erreur lors du shutdown :', err.message);
+            }
+            process.exit(0);
+        };
+        process.on('SIGTERM', () => shutdown('SIGTERM'));
+        process.on('SIGINT', () => shutdown('SIGINT'));
+
+        console.log('[Atom DB] Base initialisée :', DB_PATH);
+        console.log('[Atom DB] Checkpoint WAL programmé toutes les', CHECKPOINT_INTERVAL / 1000, 's');
     }
     return db;
 }
