@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atom — Connexion</title>
-    <link rel="stylesheet" href="/dashboard/css/vnct-design-system.css?v=0.2.5">
-    <link rel="stylesheet" href="/dashboard/css/style.css?v=0.2.5">
-    <link rel="stylesheet" href="/dashboard/css/vnct-fab-only.css?v=0.2.5">
+    <link rel="stylesheet" href="/dashboard/css/vnct-design-system.css?v=0.2.4">
+    <link rel="stylesheet" href="/dashboard/css/style.css?v=0.2.4">
+    <link rel="stylesheet" href="/dashboard/css/vnct-fab-only.css?v=0.2.4">
     <link rel="icon" type="image/x-icon" href="/dashboard/icon.ico">
     <link rel="icon" type="image/png" href="/dashboard/icon.png">
     <link rel="apple-touch-icon" href="/dashboard/icon.png">
@@ -54,28 +54,10 @@
         </div>
     </template>
 
-    <!-- Auto-redirect vers le dashboard si un token valide est deja present (session 7j) -->
-    <script>
-        (function () {
-            var t = localStorage.getItem('atom_token');
-            if (!t) return;
-            fetch('/auth/me', { headers: { 'Authorization': 'Bearer ' + t } })
-                .then(function (r) { return r.json(); })
-                .then(function (d) {
-                    if (d && d.authenticated) {
-                        window.location.replace('/dashboard/app.html');
-                    } else {
-                        localStorage.removeItem('atom_token');
-                    }
-                })
-                .catch(function () { /* reseau KO : on laisse la landing */ });
-        })();
-    </script>
-
-    <script src="/dashboard/js/vnct-common.js?v=0.2.5"></script>
+    <script src="/dashboard/js/vnct-common.js?v=0.2.4"></script>
     <script>
         VNCT.config.serviceName = 'Atom';
-        VNCT.config.serviceVersion = '0.2.5';
+        VNCT.config.serviceVersion = '0.2.4';
         VNCT.config.devReportUrl = 'https://dev.vena.city';
         VNCT.config.discordWebhookUrl = '/api/feedback/vnct';
     </script>

@@ -36,11 +36,11 @@ async function loadReactionRoles(container, guildId) {
                 ${autoroles.map(ar => {
                     const role = roles.find(r => r.id === ar.role_id);
                     const roleName = role ? role.name : ar.role_id;
-                    const roleColor = role?.color || 'var(--primary-rose)';
+                    const roleColor = role?.color || 'var(--accent)';
                     return `
-                    <div style="display:inline-flex;align-items:center;gap:.5rem;padding:.3rem .75rem;background:var(--primary-rose-dim);border:1px solid var(--primary-rose);border-radius:20px;font-size:.85rem">
+                    <div style="display:inline-flex;align-items:center;gap:.5rem;padding:.3rem .75rem;background:hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.15);border:1px solid var(--accent);border-radius:20px;font-size:.85rem">
                         <span style="color:${roleColor};font-weight:500">@${roleName}</span>
-                        <button onclick="removeAutorole('${ar.role_id}')" style="background:none;border:none;color:var(--primary-rose);cursor:pointer;font-size:1rem;line-height:1">×</button>
+                        <button onclick="removeAutorole('${ar.role_id}')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:1rem;line-height:1">×</button>
                     </div>`;
                 }).join('') || '<p style="color:var(--text-muted);font-size:.85rem">Aucun autorole configuré</p>'}
             </div>
@@ -62,12 +62,12 @@ async function loadReactionRoles(container, guildId) {
                     const chName = ch ? ch.name : vr.channel_id;
                     const role = roles.find(r => r.id === vr.role_id);
                     const roleName = role ? role.name : vr.role_id;
-                    const roleColor = role?.color || 'var(--primary-blue)';
+                    const roleColor = role?.color || 'var(--accent)';
                     return `
-                    <div style="display:flex;align-items:center;gap:.75rem;padding:.5rem .75rem;background:var(--primary-blue-dim);border:1px solid var(--primary-blue);border-radius:var(--radius-sm);font-size:.85rem">
+                    <div style="display:flex;align-items:center;gap:.75rem;padding:.5rem .75rem;background:hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.1);border:1px solid var(--accent);border-radius:var(--radius-sm);font-size:.85rem">
                         <span>🔊</span>
                         <span style="flex:1"><strong>#${chName}</strong> → <span style="color:${roleColor};font-weight:500">@${roleName}</span></span>
-                        <button onclick="removeVoiceRole('${vr.channel_id}')" style="background:none;border:none;color:var(--primary-rose);cursor:pointer;font-size:1rem;line-height:1">×</button>
+                        <button onclick="removeVoiceRole('${vr.channel_id}')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:1rem;line-height:1">×</button>
                     </div>`;
                 }).join('') || '<p style="color:var(--text-muted);font-size:.85rem">Aucun rôle vocal configuré</p>'}
             </div>
@@ -157,8 +157,8 @@ function renderPanels(panels, roles, channels, status) {
         const ch = (channels || []).find(c => c.id === p.channel_id);
         const isMissing = status && status[p.id] === 'missing';
         return `
-        <div style="padding:1rem;background:rgba(255,255,255,.02);border:1px solid ${isMissing ? 'var(--accent-red)' : 'var(--border)'};border-radius:var(--radius-sm);margin-bottom:.75rem" id="panel-${p.id}">
-            ${isMissing ? `<div style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;background:rgba(231,76,60,.1);border-radius:var(--radius-sm);margin-bottom:.75rem;font-size:.85rem;color:var(--accent-red)">
+        <div style="padding:1rem;background:rgba(255,255,255,.02);border:1px solid ${isMissing ? 'var(--danger)' : 'var(--border)'};border-radius:var(--radius-sm);margin-bottom:.75rem" id="panel-${p.id}">
+            ${isMissing ? `<div style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;background:rgba(231,76,60,.1);border-radius:var(--radius-sm);margin-bottom:.75rem;font-size:.85rem;color:var(--danger)">
                 ⚠️ Le message Discord a été supprimé.
                 <button class="btn btn-primary" style="font-size:.75rem;padding:.3rem .6rem;margin-left:auto" onclick="repostPanel(${p.id})">Reposter</button>
             </div>` : ''}
@@ -176,9 +176,9 @@ function renderPanels(panels, roles, channels, status) {
                 ${p.entries.map(e => {
                     const r = (window._rrRoles || roles).find(r => r.id === e.role_id);
                     return `
-                    <span style="font-size:.8rem;padding:.2rem .6rem;background:var(--primary-blue-dim);border:1px solid var(--primary-blue);border-radius:20px;display:inline-flex;align-items:center;gap:.3rem">
-                        ${renderEmoji(e.emoji)} → <span style="color:${r?.color || 'var(--primary-blue)'};font-weight:500">@${r?.name || e.role_id}</span>
-                        <button onclick="removePanelEntry(${p.id}, '${encodeURIComponent(e.emoji)}')" style="background:none;border:none;color:var(--primary-rose);cursor:pointer;font-size:.9rem;line-height:1;margin-left:.2rem">×</button>
+                    <span style="font-size:.8rem;padding:.2rem .6rem;background:hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.1);border:1px solid var(--accent);border-radius:20px;display:inline-flex;align-items:center;gap:.3rem">
+                        ${renderEmoji(e.emoji)} → <span style="color:${r?.color || 'var(--accent)'};font-weight:500">@${r?.name || e.role_id}</span>
+                        <button onclick="removePanelEntry(${p.id}, '${encodeURIComponent(e.emoji)}')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:.9rem;line-height:1;margin-left:.2rem">×</button>
                     </span>`;
                 }).join('') || '<span style="color:var(--text-muted);font-size:.8rem">Aucun rôle</span>'}
             </div>
@@ -191,7 +191,7 @@ function renderPanels(panels, roles, channels, status) {
                         <input class="input" placeholder="🔍 Rechercher un emoji..." oninput="filterEmojis(${p.id}, this.value)" style="font-size:.8rem;padding:.4rem .6rem;margin-bottom:.5rem">
                         <div id="emoji-grid-${p.id}" style="display:flex;flex-wrap:wrap;gap:.3rem">
                             ${(window._serverEmojis || []).map(e => `
-                                <button class="emoji-btn" data-name="${e.name.toLowerCase()}" onclick="selectEmoji(${p.id}, '${e.identifier}', '${e.url}')" style="background:none;border:1px solid transparent;border-radius:4px;cursor:pointer;padding:.2rem;transition:var(--transition)" onmouseover="this.style.borderColor='var(--primary-rose)'" onmouseout="this.style.borderColor='transparent'">
+                                <button class="emoji-btn" data-name="${e.name.toLowerCase()}" onclick="selectEmoji(${p.id}, '${e.identifier}', '${e.url}')" style="background:none;border:1px solid transparent;border-radius:4px;cursor:pointer;padding:.2rem;transition:var(--transition)" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='transparent'">
                                     <img src="${e.url}" style="width:24px;height:24px" title=":${e.name}:">
                                 </button>
                             `).join('')}

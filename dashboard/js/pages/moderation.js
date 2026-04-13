@@ -141,7 +141,7 @@ async function loadSanctions() {
             <div style="display:flex;gap:1rem;align-items:center;padding:.75rem 1rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.85rem">
                 <span style="font-size:1.1rem">${icons[s.type] || '📋'}</span>
                 <span style="color:var(--text-secondary);">#${s.id}</span>
-                <span style="flex:1"><code style="color:var(--primary-rose)">${s.user_id}</code> — ${s.reason || 'Aucune raison'}</span>
+                <span style="flex:1"><code style="color:var(--accent)">${s.user_id}</code> — ${s.reason || 'Aucune raison'}</span>
                 ${s.duration ? `<span style="color:var(--text-muted)">${s.duration}</span>` : ''}
                 <span style="color:var(--text-muted)">${new Date(s.created_at + 'Z').toLocaleDateString('fr-FR')}</span>
                 <span class="badge ${s.active ? 'badge-active' : 'badge-inactive'}">${s.active ? 'Actif' : 'Retiré'}</span>
@@ -173,7 +173,7 @@ async function loadLogToggles(guildId, config) {
                     const isDefault = item.key.startsWith('mod_');
                     const checked = enabledLogs[item.key] !== undefined ? enabledLogs[item.key] : isDefault;
                     return `<label style="display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;font-size:.8rem;cursor:pointer;transition:var(--transition)">
-                        <input type="checkbox" class="log-toggle" data-key="${item.key}" ${checked ? 'checked' : ''} onchange="saveLogToggles()" style="accent-color:var(--primary-rose)">
+                        <input type="checkbox" class="log-toggle" data-key="${item.key}" ${checked ? 'checked' : ''} onchange="saveLogToggles()" style="accent-color:var(--accent)">
                         ${item.label}
                     </label>`;
                 }).join('')}

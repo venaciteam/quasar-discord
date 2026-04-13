@@ -27,14 +27,14 @@ async function loadTickets(container, guildId) {
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
                     <div>
-                        <label style="font-size:.8rem;color:var(--text-secondary);margin-bottom:.4rem;display:block">Salon d'ouverture <span style="color:var(--primary-rose)">*</span></label>
+                        <label style="font-size:.8rem;color:var(--text-secondary);margin-bottom:.4rem;display:block">Salon d'ouverture <span style="color:var(--accent)">*</span></label>
                         <select class="select" id="setup-channel">
                             <option value="">— Choisir un salon —</option>
                             ${textChannels.map(c => `<option value="${c.id}"># ${c.name}</option>`).join('')}
                         </select>
                     </div>
                     <div>
-                        <label style="font-size:.8rem;color:var(--text-secondary);margin-bottom:.4rem;display:block">Rôle staff <span style="color:var(--primary-rose)">*</span></label>
+                        <label style="font-size:.8rem;color:var(--text-secondary);margin-bottom:.4rem;display:block">Rôle staff <span style="color:var(--accent)">*</span></label>
                         <select class="select" id="setup-staff-role">
                             <option value="">— Choisir un rôle —</option>
                             ${roles.filter(r => r.name !== '@everyone').map(r => `<option value="${r.id}">${r.name}</option>`).join('')}
@@ -189,15 +189,15 @@ async function loadTickets(container, guildId) {
         <!-- Stats -->
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:1rem">
             <div class="card">
-                <div style="font-size:2rem;font-weight:700;color:var(--primary-rose)">${openTickets.length}</div>
+                <div style="font-size:2rem;font-weight:700;color:var(--accent)">${openTickets.length}</div>
                 <div style="font-size:.85rem;color:var(--text-secondary)">Ouverts</div>
             </div>
             <div class="card">
-                <div style="font-size:2rem;font-weight:700;color:var(--primary-rose)">${closedTickets.length}</div>
+                <div style="font-size:2rem;font-weight:700;color:var(--accent)">${closedTickets.length}</div>
                 <div style="font-size:.85rem;color:var(--text-secondary)">Fermés (récents)</div>
             </div>
             <div class="card">
-                <div style="font-size:2rem;font-weight:700;color:var(--primary-rose)">${openTickets.length + closedTickets.length}</div>
+                <div style="font-size:2rem;font-weight:700;color:var(--accent)">${openTickets.length + closedTickets.length}</div>
                 <div style="font-size:.85rem;color:var(--text-secondary)">Total</div>
             </div>
         </div>
@@ -211,11 +211,11 @@ async function loadTickets(container, guildId) {
                     : openTickets.map(t => `
                         <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem .75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:.5rem">
                             <div>
-                                <span style="color:var(--primary-rose);font-weight:600">#${t.id}</span>
+                                <span style="color:var(--accent);font-weight:600">#${t.id}</span>
                                 <span style="color:var(--text-primary);font-weight:500;margin-left:.5rem">${_escapeHtml(t.user_name)}</span>
                                 <span style="color:var(--text-muted);font-size:.8rem;margin-left:.5rem">${_formatDate(t.opened_at)}</span>
                             </div>
-                            <span style="padding:2px 8px;background:var(--primary-rose);color:#000;border-radius:20px;font-size:.75rem;font-weight:600">Ouvert</span>
+                            <span style="padding:2px 8px;background:var(--accent);color:#000;border-radius:20px;font-size:.75rem;font-weight:600">Ouvert</span>
                         </div>
                     `).join('')}
             </div>
@@ -301,7 +301,7 @@ function buildCommandsCard() {
                     ['/ticket config', 'Voir la configuration']
                 ].map(([cmd, desc]) => `
                     <div style="padding:.6rem .9rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm)">
-                        <code style="color:var(--primary-rose);font-size:.85rem">${cmd}</code>
+                        <code style="color:var(--accent);font-size:.85rem">${cmd}</code>
                         <p style="color:var(--text-secondary);font-size:.8rem;margin-top:.2rem">${desc}</p>
                     </div>
                 `).join('')}

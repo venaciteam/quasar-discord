@@ -34,7 +34,7 @@ async function loadUpdate(container) {
                 </div>
                 <div>
                     <div style="color:var(--text-muted);font-size:.75rem;margin-bottom:.25rem">Dernière version</div>
-                    <div style="font-size:1.1rem;font-weight:600;color:${hasUpdate ? 'var(--primary-blue)' : 'var(--accent-green)'}">
+                    <div style="font-size:1.1rem;font-weight:600;color:${hasUpdate ? 'var(--accent)' : 'var(--success)'}">
                         ${data.remote ? 'v' + data.remote : 'Aucune release'}
                     </div>
                 </div>
@@ -45,18 +45,18 @@ async function loadUpdate(container) {
                 <div>
                     <div style="color:var(--text-muted);font-size:.75rem;margin-bottom:.25rem">Statut</div>
                     <div style="font-size:.9rem">
-                        <span class="badge ${hasUpdate ? 'badge-active' : 'badge-inactive'}" style="${hasUpdate ? 'background:var(--primary-blue-dim);color:var(--primary-blue)' : ''}">
+                        <span class="badge ${hasUpdate ? 'badge-active' : 'badge-inactive'}" style="${hasUpdate ? 'background:hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.1);color:var(--accent)' : ''}">
                             ${hasUpdate ? 'Mise à jour disponible' : 'À jour'}
                         </span>
                     </div>
                 </div>
             </div>
-            ${data.releaseUrl ? `<div style="margin-top:1rem"><a href="${data.releaseUrl}" target="_blank" rel="noopener" style="color:var(--primary-blue);font-size:.8rem">Voir les notes de version →</a></div>` : ''}
+            ${data.releaseUrl ? `<div style="margin-top:1rem"><a href="${data.releaseUrl}" target="_blank" rel="noopener" style="color:var(--accent);font-size:.8rem">Voir les notes de version →</a></div>` : ''}
         </div>
 
         ${!envReady && data.environment === 'docker' ? `
-        <div class="card" style="border-color:var(--accent-gold)">
-            <div class="card-title" style="color:var(--accent-gold)">Configuration requise</div>
+        <div class="card" style="border-color:var(--warning)">
+            <div class="card-title" style="color:var(--warning)">Configuration requise</div>
             <p style="color:var(--text-secondary);font-size:.85rem;margin-top:.5rem">
                 Pour utiliser la mise à jour automatique en Docker, ajoutez ces volumes à votre <code>docker-compose.yml</code> :
             </p>
@@ -133,7 +133,7 @@ function startUpdate() {
                 line.className = 'log-error';
                 line.textContent = `\n✗ ${data.message}`;
                 statusTitle.textContent = data.message;
-                statusTitle.style.color = 'var(--accent-red)';
+                statusTitle.style.color = 'var(--danger)';
                 es.close();
                 break;
             default:
@@ -175,7 +175,7 @@ function waitForRestart() {
                 clearInterval(poll);
                 const data = await res.json();
                 statusTitle.textContent = `Mise à jour terminée — v${data.local}`;
-                statusTitle.style.color = 'var(--accent-green)';
+                statusTitle.style.color = 'var(--success)';
 
                 const line = document.createElement('div');
                 line.className = 'log-success';
@@ -194,7 +194,7 @@ function waitForRestart() {
         if (attempts >= maxAttempts) {
             clearInterval(poll);
             statusTitle.textContent = 'Le serveur ne répond pas';
-            statusTitle.style.color = 'var(--accent-red)';
+            statusTitle.style.color = 'var(--danger)';
         }
     }, 3000);
 }

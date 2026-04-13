@@ -32,8 +32,7 @@
    22. Utilitaires — Text
    23. Animations — Keyframes
    24. Animations — Transitions de page
-   25. Composants — Footer
-   26. Accessibilité
+   25. Accessibilité
    ============================================================================ */
 
 /* ============================================================================
@@ -80,20 +79,6 @@ a {
 
 a:hover {
   text-decoration: underline;
-}
-
-/* Safety-net : aucun element stylise en bouton ne doit etre souligne,
-   meme si c'est un <a> (auth Discord, CTA, landing-btn, vnct-btn, etc.).
-   Cible tout lien avec une classe contenant "-btn" ou "btn--",
-   plus le composant standard .vnct-btn.
-   Voir VNCT-Design-System-DA.md section "Boutons et liens stylises". */
-a.vnct-btn,
-a.vnct-btn:hover,
-a[class*="-btn"],
-a[class*="-btn"]:hover,
-a[class*="btn--"],
-a[class*="btn--"]:hover {
-  text-decoration: none;
 }
 
 img, svg {
@@ -527,7 +512,7 @@ small, .vnct-text-sm {
   border-radius: var(--radius-md);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all 300ms ease;
+  transition: all var(--duration-fast) ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1094,7 +1079,7 @@ small, .vnct-text-sm {
 
 .vnct-fab {
   position: fixed;
-  bottom: var(--space-4);
+  bottom: var(--space-6);
   right: var(--space-6);
   z-index: 900;
   width: 56px;
@@ -1108,7 +1093,7 @@ small, .vnct-text-sm {
   align-items: center;
   justify-content: center;
   box-shadow: var(--neon-shadow-md);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 @media (min-width: 769px) {
@@ -1135,7 +1120,7 @@ small, .vnct-text-sm {
 /* Menu déplié */
 .vnct-fab-menu {
   position: fixed;
-  bottom: calc(56px + var(--space-6));
+  bottom: calc(56px + var(--space-8));
   right: var(--space-6);
   z-index: 899;
   display: flex;
@@ -1238,11 +1223,11 @@ small, .vnct-text-sm {
 /* Mobile : safe area */
 @media (max-width: 768px) {
   .vnct-fab {
-    bottom: calc(var(--space-4) + env(safe-area-inset-bottom));
+    bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
   }
 
   .vnct-fab-menu {
-    bottom: calc(56px + var(--space-6) + env(safe-area-inset-bottom));
+    bottom: calc(56px + var(--space-8) + env(safe-area-inset-bottom));
   }
 
   .vnct-fab-menu__item {
@@ -1645,48 +1630,6 @@ small, .vnct-text-sm {
 }
 
 /* ============================================================================
-   22c. COMPOSANTS — BETA BANNER
-   Bandeau d'avertissement pour les services en développement.
-   Se place juste après la nav (desktop) / header (mobile).
-   ============================================================================ */
-
-.vnct-beta-banner {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-6);
-  background: hsla(35, 90%, 50%, 0.08);
-  border-bottom: 1px solid hsla(35, 90%, 50%, 0.25);
-  font-family: var(--font-family);
-  font-size: var(--text-xs);
-  color: var(--warning);
-  line-height: var(--leading-normal);
-  text-align: left;
-}
-
-.vnct-beta-banner__icon {
-  flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  margin-top: 2px;
-}
-
-/* Variante success (services sécurisés / P2P) */
-.vnct-beta-banner--success {
-  background: hsla(160, 80%, 45%, 0.08);
-  border-bottom: 1px solid hsla(160, 80%, 45%, 0.25);
-  color: var(--success);
-}
-
-@media (max-width: 768px) {
-  .vnct-beta-banner {
-    padding: var(--space-2) var(--space-4);
-    font-size: var(--text-2xs, 11px);
-  }
-}
-
-/* ============================================================================
    23. ANIMATIONS — KEYFRAMES
    ============================================================================ */
 
@@ -1903,71 +1846,7 @@ small, .vnct-text-sm {
    Aucun CSS supplémentaire nécessaire ici. */
 
 /* ============================================================================
-   26. COMPOSANTS — FOOTER
-   Footer standardisé présent sur TOUTES les pages publiques des services VNCT.
-   Contient : copyright Venacity + liens légaux (ML, PDC, CGU).
-   ============================================================================ */
-
-.vnct-footer {
-  margin-top: auto;
-  padding: var(--space-6) var(--space-4);
-  border-top: 1px solid var(--border-default);
-  text-align: center;
-}
-
-.vnct-footer__inner {
-  max-width: 800px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.vnct-footer__brand {
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  font-weight: var(--font-regular);
-}
-
-.vnct-footer__links {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-2);
-}
-
-.vnct-footer__links a {
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: color var(--duration-normal) ease;
-}
-
-.vnct-footer__links a:hover {
-  color: var(--accent);
-  text-decoration: none;
-}
-
-.vnct-footer__sep {
-  color: var(--text-muted);
-  font-size: var(--text-xs);
-  user-select: none;
-}
-
-@media (max-width: 480px) {
-  .vnct-footer__links {
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-  .vnct-footer__sep {
-    display: none;
-  }
-}
-
-/* ============================================================================
-   27. ACCESSIBILITÉ
+   25. ACCESSIBILITÉ
    ============================================================================ */
 
 /* Focus visible */

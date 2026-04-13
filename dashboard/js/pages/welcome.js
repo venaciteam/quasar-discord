@@ -39,7 +39,7 @@ async function loadWelcome(container, guildId) {
                     </div>
 
                     <details style="cursor:pointer">
-                        <summary style="font-size:.85rem;color:var(--primary-rose);margin-bottom:.75rem">⚙️ Embed (optionnel)</summary>
+                        <summary style="font-size:.85rem;color:var(--accent);margin-bottom:.75rem">⚙️ Embed (optionnel)</summary>
                         <div style="display:flex;flex-direction:column;gap:.75rem;padding:.75rem;background:rgba(255,255,255,.02);border-radius:var(--radius-sm);border:1px solid var(--border)">
                             <div>
                                 <label style="font-size:.75rem;color:var(--text-secondary);margin-bottom:.3rem;display:block">Titre embed</label>
@@ -85,7 +85,7 @@ async function loadWelcome(container, guildId) {
                     </div>
 
                     <details style="cursor:pointer">
-                        <summary style="font-size:.85rem;color:var(--primary-blue);margin-bottom:.75rem">⚙️ Embed (optionnel)</summary>
+                        <summary style="font-size:.85rem;color:var(--accent);margin-bottom:.75rem">⚙️ Embed (optionnel)</summary>
                         <div style="display:flex;flex-direction:column;gap:.75rem;padding:.75rem;background:rgba(255,255,255,.02);border-radius:var(--radius-sm);border:1px solid var(--border)">
                             <div>
                                 <label style="font-size:.75rem;color:var(--text-secondary);margin-bottom:.3rem;display:block">Titre embed</label>

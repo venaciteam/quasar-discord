@@ -95,7 +95,6 @@
 
 .landing-btn:hover {
     color: #000;
-    text-decoration: none; /* Override a:hover du DS — un bouton-ancre ne doit jamais etre souligne */
     transform: translateY(-2px);
     filter: brightness(1.1);
     box-shadow: var(--neon-shadow-md);

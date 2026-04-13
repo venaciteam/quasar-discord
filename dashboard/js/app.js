@@ -44,7 +44,7 @@ function showToast(message, type = 'success') {
     }
 
     const toast = document.createElement('div');
-    const color = type === 'error' ? 'var(--accent-red)' : type === 'info' ? 'var(--primary-blue)' : 'var(--accent-green)';
+    const color = type === 'error' ? 'var(--danger)' : type === 'info' ? 'var(--accent)' : 'var(--success)';
     toast.style.cssText = `padding:.75rem 1.25rem;background:var(--bg-secondary);border:1px solid ${color};border-radius:var(--radius-sm);color:var(--text-primary);font-size:.875rem;box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;max-width:320px`;
     toast.textContent = message;
     toastContainer.appendChild(toast);
@@ -160,7 +160,7 @@ async function loadPage(page) {
     if (page !== 'overview' && page !== 'music') {
         content.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;padding:4rem;color:var(--text-muted)">
             <div style="text-align:center">
-                <div style="width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--primary-rose);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem"></div>
+                <div style="width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem"></div>
                 Chargement...
             </div>
         </div>`;
@@ -455,7 +455,7 @@ function loadMusic(container) {
                     ['/disconnect', 'Déconnecter le bot']
                 ].map(([cmd, desc]) => `
                     <div style="padding:.6rem .9rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm)">
-                        <code style="color:var(--primary-rose);font-size:.85rem">${cmd}</code>
+                        <code style="color:var(--accent);font-size:.85rem">${cmd}</code>
                         <p style="color:var(--text-secondary);font-size:.8rem;margin-top:.2rem">${desc}</p>
                     </div>
                 `).join('')}

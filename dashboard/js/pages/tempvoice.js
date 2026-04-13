@@ -58,15 +58,15 @@ async function loadTempVoice(container, guildId) {
         <!-- Stats -->
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:1rem">
             <div class="card">
-                <div style="font-size:2rem;font-weight:700;color:var(--primary-rose)">${stats.triggers}</div>
+                <div style="font-size:2rem;font-weight:700;color:var(--accent)">${stats.triggers}</div>
                 <div style="font-size:.85rem;color:var(--text-secondary)">Triggers</div>
             </div>
             <div class="card">
-                <div style="font-size:2rem;font-weight:700;color:var(--primary-rose)">${stats.active}</div>
+                <div style="font-size:2rem;font-weight:700;color:var(--accent)">${stats.active}</div>
                 <div style="font-size:.85rem;color:var(--text-secondary)">Vocaux actifs</div>
             </div>
             <div class="card">
-                <div style="font-size:2rem;font-weight:700;color:var(--primary-rose)">${stats.preferences}</div>
+                <div style="font-size:2rem;font-weight:700;color:var(--accent)">${stats.preferences}</div>
                 <div style="font-size:.85rem;color:var(--text-secondary)">Préférences sauvées</div>
             </div>
         </div>
@@ -112,7 +112,7 @@ async function loadTempVoice(container, guildId) {
                     ['/voice reset', 'Reset préférences (catégorie)']
                 ].map(([cmd, desc]) => `
                     <div style="padding:.6rem .9rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm)">
-                        <code style="color:var(--primary-rose);font-size:.85rem">${cmd}</code>
+                        <code style="color:var(--accent);font-size:.85rem">${cmd}</code>
                         <p style="color:var(--text-secondary);font-size:.8rem;margin-top:.2rem">${desc}</p>
                     </div>
                 `).join('')}

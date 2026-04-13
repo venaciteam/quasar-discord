@@ -82,7 +82,7 @@ function renderCmds(cmds) {
     return `<div style="display:flex;flex-direction:column;gap:.5rem" id="cmds-list-inner" onclick="handleCmdAction(event)">
         ${cmds.map(c => `
             <div style="display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm)">
-                <code style="color:var(--primary-rose);font-size:.9rem;min-width:100px">/${c.name}</code>
+                <code style="color:var(--accent);font-size:.9rem;min-width:100px">/${c.name}</code>
                 <span style="flex:1;color:var(--text-secondary);font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
                     ${c.embed_id ? `📝 Embed : <strong>${c.embed_name || 'lié'}</strong>` : (c.response?.substring(0, 80) + (c.response?.length > 80 ? '…' : '') || '*vide*')}
                 </span>
