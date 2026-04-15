@@ -1,12 +1,12 @@
 // ═══════════════════════════════════
-//        Atom Auto-Update Service
+//        Quasar Auto-Update Service
 // ═══════════════════════════════════
 
 const { execSync, spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const GITHUB_REPO = 'venaciteam/atom-discord';
+const GITHUB_REPO = 'venaciteam/quasar-discord';
 const CHECK_INTERVAL = 12 * 60 * 60 * 1000; // 12h
 const GITHUB_TIMEOUT = 10000; // 10s
 
@@ -29,7 +29,7 @@ function isDocker() {
 function getEnvironment() {
     if (!isDocker()) return { type: 'native', ready: true };
 
-    const hostDir = process.env.ATOM_HOST_DIR;
+    const hostDir = process.env.QUASAR_HOST_DIR;
     const socketOk = fs.existsSync('/var/run/docker.sock');
     const composeFile = hostDir ? fs.existsSync(path.join(hostDir, 'docker-compose.yml')) : false;
 
@@ -60,7 +60,7 @@ async function fetchLatestRelease() {
 
     try {
         const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`, {
-            headers: { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Atom-Bot' },
+            headers: { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Quasar-Bot' },
             signal: controller.signal
         });
 
@@ -161,7 +161,7 @@ async function runNativeUpdate(onLog) {
         await spawnStep('npm', ['ci', '--omit=dev'], { cwd: appDir }, onLog);
 
         onLog('status', 'Redémarrage...');
-        onLog('done', 'Mise à jour terminée. Atom redémarre...');
+        onLog('done', 'Mise à jour terminée. Quasar redémarre...');
 
         setTimeout(() => {
             updating = false;
@@ -179,7 +179,7 @@ async function runNativeUpdate(onLog) {
 async function runDockerUpdate(env, onLog) {
     if (!env.ready) {
         onLog('error', 'Configuration Docker incomplète.');
-        if (!env.hostDir) onLog('error', 'ATOM_HOST_DIR manquant — montez le source dans docker-compose.yml');
+        if (!env.hostDir) onLog('error', 'QUASAR_HOST_DIR manquant — montez le source dans docker-compose.yml');
         if (!env.socketOk) onLog('error', 'Docker socket non monté (/var/run/docker.sock)');
         if (!env.composeFile) onLog('error', 'docker-compose.yml introuvable dans le répertoire monté');
         onLog('fail', 'Impossible de lancer la mise à jour.');
@@ -205,7 +205,7 @@ async function runDockerUpdate(env, onLog) {
         // 4. Résoudre le chemin hôte réel du code source
         //    (hostDir = /host-app dans le container, on a besoin du chemin sur l'hôte)
         const hostPath = execSync(
-            "docker inspect --format '{{range .Mounts}}{{if eq .Destination \"/host-app\"}}{{.Source}}{{end}}{{end}}' atom",
+            "docker inspect --format '{{range .Mounts}}{{if eq .Destination \"/host-app\"}}{{.Source}}{{end}}{{end}}' quasar",
             { timeout: 5000 }
         ).toString().trim();
 
@@ -214,8 +214,8 @@ async function runDockerUpdate(env, onLog) {
         }
 
         // 5. Récupérer le nom de l'image (qui vient d'être rebuild)
-        const atomImage = execSync(
-            "docker inspect --format '{{.Config.Image}}' atom",
+        const quasarImage = execSync(
+            "docker inspect --format '{{.Config.Image}}' quasar",
             { timeout: 5000 }
         ).toString().trim();
 
@@ -225,18 +225,18 @@ async function runDockerUpdate(env, onLog) {
         // 6. Lancer un container helper éphémère pour recréer le container principal.
         //    On ne peut pas faire docker compose up depuis le container qu'on veut recréer :
         //    l'arrêt du container tue le processus compose avant qu'il ne crée le nouveau.
-        //    Le helper survit à l'arrêt du container atom et termine la re-création.
+        //    Le helper survit à l'arrêt du container quasar et termine la re-création.
         setTimeout(() => {
             updating = false;
-            try { execSync('docker rm -f atom-updater', { stdio: 'ignore' }); } catch {}
+            try { execSync('docker rm -f quasar-updater', { stdio: 'ignore' }); } catch {}
 
             const up = spawn('docker', [
                 'run', '--rm', '-d',
-                '--name', 'atom-updater',
+                '--name', 'quasar-updater',
                 '-v', '/var/run/docker.sock:/var/run/docker.sock',
                 '-v', `${hostPath}:${hostPath}`,
                 '-w', hostPath,
-                atomImage,
+                quasarImage,
                 'sh', '-c', 'sleep 2 && docker compose up -d --force-recreate'
             ], {
                 stdio: 'ignore',
@@ -269,7 +269,7 @@ async function rollbackGit(commitHash, dir, onLog) {
 function startPeriodicCheck() {
     checkVersion().then(result => {
         if (result?.updateAvailable) {
-            console.log(`[Atom] Mise à jour disponible : v${result.local} → v${result.remote}`);
+            console.log(`[Quasar] Mise à jour disponible : v${result.local} → v${result.remote}`);
         }
     }).catch(() => {});
 

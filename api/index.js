@@ -25,7 +25,7 @@ function createApi(discordClient) {
 
     // Feedback relay → DevPortal (dev.vena.city)
     // Reçoit le multipart/form-data du FAB et le forward tel quel au DevPortal.
-    // Pas besoin de parser le body côté Atom — on pipe les chunks bruts.
+    // Pas besoin de parser le body côté Quasar — on pipe les chunks bruts.
     const DEVREPORT_URL = 'https://dev.vena.city';
     app.post(['/api/feedback', '/api/feedback/vnct'], (req, res) => {
         const chunks = [];
@@ -45,7 +45,7 @@ function createApi(discordClient) {
                     res.status(response.status).json(data);
                 }
             } catch (err) {
-                console.error('[Atom] DevReport relay error:', err.message);
+                console.error('[Quasar] DevReport relay error:', err.message);
                 res.status(502).json({ error: 'Impossible de contacter le DevPortal' });
             }
         });

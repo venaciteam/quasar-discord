@@ -68,7 +68,7 @@ router.get('/callback', async (req, res) => {
         // Passer le token via URL pour stockage en localStorage (évite les problèmes de cookie avec Cloudflare)
         res.redirect(`/dashboard/app.html?token=${jwt}`);
     } catch (error) {
-        console.error('[Atom] Erreur OAuth2:', error);
+        console.error('[Quasar] Erreur OAuth2:', error);
         res.redirect('/?error=auth_failed');
     }
 });

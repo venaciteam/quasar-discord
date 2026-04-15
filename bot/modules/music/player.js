@@ -69,7 +69,7 @@ function createFfmpegStream(audioUrl, volume = 0.75) {
         'pipe:1'
     ], { stdio: ['ignore', 'pipe', 'ignore'] });
 
-    proc.on('error', (e) => console.error('[Atom Music] ffmpeg error:', e.message));
+    proc.on('error', (e) => console.error('[Quasar Music] ffmpeg error:', e.message));
 
     // Cleanup : kill ffmpeg si le stream est détruit (skip, stop, etc.)
     proc.stdout.on('close', () => {
@@ -93,7 +93,7 @@ async function playNext(guildId) {
     queue.current = track;
 
     try {
-        console.log(`[Atom Music] Lecture: ${track.url}`);
+        console.log(`[Quasar Music] Lecture: ${track.url}`);
 
         const audioUrl = await getAudioUrl(track.url);
         const stream = createFfmpegStream(audioUrl, 0.40);
@@ -128,10 +128,10 @@ async function playNext(guildId) {
                 { name: 'Demandé par', value: track.requestedBy, inline: true }
             )
             .setTimestamp();
-        if (queue.textChannel?.guild) sendLog(queue.textChannel.guild, 'atom_music', musicLog).catch(() => {});
+        if (queue.textChannel?.guild) sendLog(queue.textChannel.guild, 'quasar_music', musicLog).catch(() => {});
 
     } catch (err) {
-        console.error('[Atom Music] Erreur lecture:', err.message);
+        console.error('[Quasar Music] Erreur lecture:', err.message);
         queue.textChannel?.send({ content: `❌ Erreur lors de la lecture de **${track.title}**. Passage au suivant...` }).catch(() => {});
         playNext(guildId);
     }
@@ -147,7 +147,7 @@ function setupPlayer(queue) {
     });
 
     player.on('error', (err) => {
-        console.error('[Atom Music] Player error:', err.message);
+        console.error('[Quasar Music] Player error:', err.message);
         queue.current = null;
         playNext(queue.guildId);
     });

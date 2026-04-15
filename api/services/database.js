@@ -1,7 +1,7 @@
 const Database = require('better-sqlite3');
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, '..', '..', 'data', 'atom.db');
+const DB_PATH = path.join(__dirname, '..', '..', 'data', 'quasar.db');
 
 // --- Intervalle de checkpoint WAL (5 minutes) ---
 const CHECKPOINT_INTERVAL = 5 * 60 * 1000;
@@ -19,38 +19,39 @@ function getDb() {
         initTables();
         migrateTempVoice();
         migrateTickets();
+        migrateAtomToQuasar();
 
         // --- Checkpoint périodique (toutes les 5 min) ---
         checkpointTimer = setInterval(() => {
             try {
                 db.pragma('wal_checkpoint(TRUNCATE)');
-                console.log('[Atom DB] Checkpoint WAL effectué');
+                console.log('[Quasar DB] Checkpoint WAL effectué');
             } catch (err) {
-                console.error('[Atom DB] Erreur checkpoint WAL :', err.message);
+                console.error('[Quasar DB] Erreur checkpoint WAL :', err.message);
             }
         }, CHECKPOINT_INTERVAL);
         if (checkpointTimer.unref) checkpointTimer.unref();
 
         // --- Graceful shutdown ---
         const shutdown = (signal) => {
-            console.log(`[Atom DB] Signal ${signal} reçu, checkpoint final...`);
+            console.log(`[Quasar DB] Signal ${signal} reçu, checkpoint final...`);
             try {
                 if (checkpointTimer) clearInterval(checkpointTimer);
                 if (db && db.open) {
                     db.pragma('wal_checkpoint(TRUNCATE)');
                     db.close();
-                    console.log('[Atom DB] Base fermée proprement.');
+                    console.log('[Quasar DB] Base fermée proprement.');
                 }
             } catch (err) {
-                console.error('[Atom DB] Erreur lors du shutdown :', err.message);
+                console.error('[Quasar DB] Erreur lors du shutdown :', err.message);
             }
             process.exit(0);
         };
         process.on('SIGTERM', () => shutdown('SIGTERM'));
         process.on('SIGINT', () => shutdown('SIGINT'));
 
-        console.log('[Atom DB] Base initialisée :', DB_PATH);
-        console.log('[Atom DB] Checkpoint WAL programmé toutes les', CHECKPOINT_INTERVAL / 1000, 's');
+        console.log('[Quasar DB] Base initialisée :', DB_PATH);
+        console.log('[Quasar DB] Checkpoint WAL programmé toutes les', CHECKPOINT_INTERVAL / 1000, 's');
     }
     return db;
 }
@@ -223,7 +224,7 @@ function initTables() {
             id INTEGER PRIMARY KEY CHECK (id = 1),
             status TEXT NOT NULL DEFAULT 'online',
             activity_type INTEGER NOT NULL DEFAULT 3,
-            activity_text TEXT NOT NULL DEFAULT 'app.vena.city'
+            activity_text TEXT NOT NULL DEFAULT 'atlas.vena.city'
         );
 
         -- Indexes pour les performances
@@ -245,7 +246,7 @@ function migrateTempVoice() {
         const old = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='tempvoice_config'").get();
         if (old) {
             db.exec('DROP TABLE tempvoice_config');
-            console.log('[Atom] Migration: tempvoice_config → tempvoice_triggers');
+            console.log('[Quasar] Migration: tempvoice_config → tempvoice_triggers');
         }
     } catch {}
 
@@ -254,7 +255,7 @@ function migrateTempVoice() {
         const cols = db.prepare("PRAGMA table_info(tempvoice_active)").all().map(c => c.name);
         if (!cols.includes('category_id')) {
             db.exec("ALTER TABLE tempvoice_active ADD COLUMN category_id TEXT NOT NULL DEFAULT ''");
-            console.log('[Atom] Migration: tempvoice_active + category_id');
+            console.log('[Quasar] Migration: tempvoice_active + category_id');
         }
     } catch {}
 
@@ -278,7 +279,7 @@ function migrateTempVoice() {
                 DROP TABLE tempvoice_preferences;
                 ALTER TABLE tempvoice_preferences_new RENAME TO tempvoice_preferences;
             `);
-            console.log('[Atom] Migration: tempvoice_preferences + category_id (PK)');
+            console.log('[Quasar] Migration: tempvoice_preferences + category_id (PK)');
         }
     } catch {}
 
@@ -287,7 +288,7 @@ function migrateTempVoice() {
         const cutoff = Math.floor(Date.now() / 1000) - (90 * 24 * 60 * 60);
         const result = db.prepare('DELETE FROM tempvoice_preferences WHERE updated_at < ?').run(cutoff);
         if (result.changes > 0) {
-            console.log(`[Atom] TempVoice: ${result.changes} préférence(s) expirée(s) supprimée(s)`);
+            console.log(`[Quasar] TempVoice: ${result.changes} préférence(s) expirée(s) supprimée(s)`);
         }
     } catch {}
 }
@@ -298,9 +299,74 @@ function migrateTickets() {
         if (cols.length > 0 && !cols.includes('panel_title')) {
             db.exec('ALTER TABLE ticket_config ADD COLUMN panel_title TEXT');
             db.exec('ALTER TABLE ticket_config ADD COLUMN panel_description TEXT');
-            console.log('[Atom] Migration: ticket_config + panel_title, panel_description');
+            console.log('[Quasar] Migration: ticket_config + panel_title, panel_description');
         }
     } catch {}
+}
+
+// --- Migration rebranding Atom -> Quasar (v1, one-shot) ---
+// Renomme les cles atom_* heritees dans la DB pour coherence post-rebranding.
+// Idempotente : trackee via _migrations.
+function migrateAtomToQuasar() {
+    try {
+        db.exec(`CREATE TABLE IF NOT EXISTS _migrations (
+            name TEXT PRIMARY KEY,
+            applied_at INTEGER NOT NULL
+        )`);
+
+        const already = db.prepare('SELECT 1 FROM _migrations WHERE name = ?').get('atom_to_quasar_v1');
+        if (already) return;
+
+        const apply = db.transaction(() => {
+            // 1. Guild-id special : __atom_instance_id -> __quasar_instance_id
+            const guildUpdate = db.prepare(
+                "UPDATE guilds SET guild_id = '__quasar_instance_id' WHERE guild_id = '__atom_instance_id'"
+            ).run();
+            if (guildUpdate.changes > 0) {
+                console.log('[Quasar] Migration atom->quasar: instance_id renomme');
+            }
+
+            // 2. enabledLogs : atom_* -> quasar_* dans modules.config (JSON) pour moderation
+            const mods = db.prepare(
+                "SELECT guild_id, module_name, config FROM modules WHERE module_name = 'moderation'"
+            ).all();
+            const updateMod = db.prepare(
+                'UPDATE modules SET config = ? WHERE guild_id = ? AND module_name = ?'
+            );
+            let modsMigrated = 0;
+            for (const mod of mods) {
+                let cfg;
+                try { cfg = JSON.parse(mod.config || '{}'); } catch { continue; }
+                if (!cfg.enabledLogs || typeof cfg.enabledLogs !== 'object') continue;
+                const newLogs = {};
+                let changed = false;
+                for (const [key, val] of Object.entries(cfg.enabledLogs)) {
+                    if (key.startsWith('atom_')) {
+                        newLogs['quasar_' + key.slice(5)] = val;
+                        changed = true;
+                    } else {
+                        newLogs[key] = val;
+                    }
+                }
+                if (changed) {
+                    cfg.enabledLogs = newLogs;
+                    updateMod.run(JSON.stringify(cfg), mod.guild_id, mod.module_name);
+                    modsMigrated++;
+                }
+            }
+            if (modsMigrated > 0) {
+                console.log(`[Quasar] Migration atom->quasar: ${modsMigrated} config(s) de logs moderation mise(s) a jour`);
+            }
+
+            db.prepare('INSERT INTO _migrations (name, applied_at) VALUES (?, ?)').run(
+                'atom_to_quasar_v1', Date.now()
+            );
+        });
+        apply();
+        console.log('[Quasar] Migration atom_to_quasar_v1 appliquee');
+    } catch (err) {
+        console.error('[Quasar] Erreur migration atom_to_quasar_v1 :', err.message);
+    }
 }
 
 module.exports = { getDb };

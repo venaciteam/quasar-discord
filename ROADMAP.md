@@ -1,9 +1,9 @@
-# ⚛ Atom — Roadmap
+# 🌌 Quasar — Roadmap
 
 ## v0.1.0 — Release publique ✅
 
 - [x] Repo GitHub public
-- [x] One-liner install : `curl -sSL https://raw.githubusercontent.com/venaciteam/atom-discord/main/install.sh | bash`
+- [x] One-liner install : `curl -sSL https://raw.githubusercontent.com/venaciteam/quasar-discord/main/install.sh | bash`
 - [x] Landing page avec compteur d'instances
 - [x] Dashboard accessible sur le reseau local
 - [ ] Tests sur Raspberry Pi 4
@@ -30,4 +30,4 @@
 
 - [ ] Systeme de plugins (modules activables/desactivables)
 - [ ] Backup/restore config depuis le dashboard
-- [ ] Support Fluxer (atom-fluxer)
+- [ ] Support Fluxer (quasar-fluxer)

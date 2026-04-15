@@ -1,5 +1,5 @@
 // ═══════════════════════════════════
-//     Atom — Présence du bot
+//     Quasar — Présence du bot
 //     GET + PUT /api/presence
 //     Owner only pour la modification
 // ═══════════════════════════════════
@@ -35,12 +35,12 @@ router.get('/', requireAuth, (req, res) => {
             res.json({
                 status: 'online',
                 activity_type: 3,
-                activity_text: 'app.vena.city',
+                activity_text: 'atlas.vena.city',
                 isOwner
             });
         }
     } catch (err) {
-        console.error('[Atom] Erreur GET /api/presence:', err);
+        console.error('[Quasar] Erreur GET /api/presence:', err);
         res.status(500).json({ error: 'Erreur serveur' });
     }
 });
@@ -97,10 +97,10 @@ router.put('/', requireAuth, requireOwner, (req, res) => {
             }
         }
 
-        console.log(`[Atom] Présence mise à jour par ${req.user.username}: ${status}${actType === -1 ? ' (aucune activité)' : ` — ${text} (type ${actType})`}`);
+        console.log(`[Quasar] Présence mise à jour par ${req.user.username}: ${status}${actType === -1 ? ' (aucune activité)' : ` — ${text} (type ${actType})`}`);
         res.json({ success: true });
     } catch (err) {
-        console.error('[Atom] Erreur PUT /api/presence:', err);
+        console.error('[Quasar] Erreur PUT /api/presence:', err);
         res.status(500).json({ error: 'Erreur serveur' });
     }
 });

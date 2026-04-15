@@ -24,7 +24,7 @@ async function deployCommands(client) {
     const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
     try {
-        console.log(`[Atom] Déploiement de ${commands.length} commandes slash...`);
+        console.log(`[Quasar] Déploiement de ${commands.length} commandes slash...`);
 
         // Déployer par guild (instantané) plutôt que global (jusqu'à 1h de délai)
         for (const guild of client.guilds.cache.values()) {
@@ -32,12 +32,12 @@ async function deployCommands(client) {
                 Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guild.id),
                 { body: commands }
             );
-            console.log(`[Atom] Commandes déployées sur: ${guild.name}`);
+            console.log(`[Quasar] Commandes déployées sur: ${guild.name}`);
         }
 
-        console.log('[Atom] Commandes slash déployées ✓');
+        console.log('[Quasar] Commandes slash déployées ✓');
     } catch (error) {
-        console.error('[Atom] Erreur déploiement commandes:', error);
+        console.error('[Quasar] Erreur déploiement commandes:', error);
     }
 }
 

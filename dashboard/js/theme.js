@@ -1,7 +1,7 @@
 // ═══ Theme toggle (dark/light + auto) ═══
 
 (function() {
-    const STORAGE_KEY = 'atom_theme';
+    const STORAGE_KEY = 'quasar_theme';
 
     function getPreferred() {
         const stored = localStorage.getItem(STORAGE_KEY);

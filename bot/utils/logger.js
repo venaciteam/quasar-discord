@@ -29,9 +29,9 @@ const LOG_CATEGORIES = {
     // Tickets
     'ticket_open': { label: '🎫 Ticket ouvert', category: 'Tickets' },
     'ticket_close': { label: '🎫 Ticket fermé', category: 'Tickets' },
-    // Atom
-    'atom_command': { label: '⚡ Commande utilisée', category: 'Atom' },
-    'atom_music': { label: '🎵 Musique jouée', category: 'Atom' },
+    // Quasar
+    'quasar_command': { label: '⚡ Commande utilisée', category: 'Quasar' },
+    'quasar_music': { label: '🎵 Musique jouée', category: 'Quasar' },
 };
 
 function getLogConfig(guildId) {
@@ -62,7 +62,7 @@ async function sendLog(guild, logType, embed) {
     try {
         await channel.send({ embeds: [embed] });
     } catch (e) {
-        console.error(`[Atom] Erreur log ${logType}:`, e.message);
+        console.error(`[Quasar] Erreur log ${logType}:`, e.message);
     }
 }
 

@@ -47,7 +47,7 @@ router.post('/', requireAuth, requireGuildAdmin, async (req, res) => {
             body: { name: cmdName, description: (response || `Commande ${cmdName}`).substring(0, 100), type: 1 }
         });
     } catch (e) {
-        console.error('[Atom] Erreur deploy cmd custom:', e.message);
+        console.error('[Quasar] Erreur deploy cmd custom:', e.message);
     }
 
     res.json({ success: true });
@@ -87,7 +87,7 @@ router.delete('/:name', requireAuth, requireGuildAdmin, async (req, res) => {
             await rest.delete(Routes.applicationGuildCommand(process.env.DISCORD_CLIENT_ID, req.params.guildId, cmd.id));
         }
     } catch (e) {
-        console.error('[Atom] Erreur suppression cmd Discord:', e.message);
+        console.error('[Quasar] Erreur suppression cmd Discord:', e.message);
     }
 
     res.json({ success: true });

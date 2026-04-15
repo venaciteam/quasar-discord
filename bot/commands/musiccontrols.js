@@ -111,10 +111,10 @@ const np = {
 
 // /disconnect
 const disconnect = {
-    data: new SlashCommandBuilder().setName('disconnect').setDescription('Déconnecter Atom du salon vocal'),
+    data: new SlashCommandBuilder().setName('disconnect').setDescription('Déconnecter Quasar du salon vocal'),
     async execute(interaction) {
         const q = getQueue(interaction.guild.id);
-        if (!q) return interaction.reply({ content: '❌ Atom n\'est pas dans un salon vocal.', ephemeral: true });
+        if (!q) return interaction.reply({ content: '❌ Quasar n\'est pas dans un salon vocal.', ephemeral: true });
 
         q.tracks = [];
         q.player?.stop();

@@ -127,7 +127,7 @@ async function deployCustomCommand(client, guildId, name, description) {
         const newCmd = { name, description: description.substring(0, 100), type: 1 };
         await rest.post(Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guildId), { body: newCmd });
     } catch (e) {
-        console.error('[Atom] Erreur déploiement commande custom:', e.message);
+        console.error('[Quasar] Erreur déploiement commande custom:', e.message);
     }
 }
 
@@ -142,6 +142,6 @@ async function removeCustomCommand(client, guildId, name) {
             await rest.delete(Routes.applicationGuildCommand(process.env.DISCORD_CLIENT_ID, guildId, cmd.id));
         }
     } catch (e) {
-        console.error('[Atom] Erreur suppression commande custom:', e.message);
+        console.error('[Quasar] Erreur suppression commande custom:', e.message);
     }
 }

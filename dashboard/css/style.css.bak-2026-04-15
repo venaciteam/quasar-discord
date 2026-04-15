@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════ */
-/*   Atom Dashboard — Styles specifiques                              */
+/*   Quasar Dashboard — Styles specifiques                              */
 /*   Depend de vnct-design-system.css (charge avant ce fichier)       */
 /*   Aucune variable de couleur ici — tout vient du DS                */
 /* ═══════════════════════════════════════════════════════════════════ */
@@ -25,8 +25,8 @@
     to { transform: rotate(360deg); }
 }
 
-/* ═══ Atom logo icon ═══ */
-.atom-logo-icon {
+/* ═══ Quasar logo icon ═══ */
+.quasar-logo-icon {
     height: 1.2em;
     width: 1.2em;
     object-fit: contain;
@@ -95,6 +95,7 @@
 
 .landing-btn:hover {
     color: #000;
+    text-decoration: none; /* Override a:hover du DS — un bouton-ancre ne doit jamais etre souligne */
     transform: translateY(-2px);
     filter: brightness(1.1);
     box-shadow: var(--neon-shadow-md);

@@ -25,7 +25,7 @@ module.exports = {
                 await channel.send({ content });
             }
         } catch (e) {
-            console.error('[Atom] Erreur message welcome:', e.message);
+            console.error('[Quasar] Erreur message welcome:', e.message);
         }
 
         // Log membre rejoint
@@ -47,7 +47,7 @@ module.exports = {
             try {
                 await member.roles.add(ar.role_id);
             } catch (e) {
-                console.error('[Atom] Erreur autorole:', e.message);
+                console.error('[Quasar] Erreur autorole:', e.message);
             }
         }
     }

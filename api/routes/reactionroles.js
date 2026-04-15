@@ -213,7 +213,7 @@ async function refreshPanelFromApi(req, panel, panelId, db) {
 
         if (!msg) {
             // Message supprimé par un admin → re-poster
-            console.log(`[Atom] Panel #${panelId} : message supprimé, re-post...`);
+            console.log(`[Quasar] Panel #${panelId} : message supprimé, re-post...`);
             msg = await channel.send({ embeds: [embed] });
             db.prepare('UPDATE reaction_panels SET message_id = ? WHERE id = ?').run(msg.id, panelId);
         } else {
@@ -233,7 +233,7 @@ async function refreshPanelFromApi(req, panel, panelId, db) {
             }
         }
     } catch (e) {
-        console.error('[Atom] Erreur refresh panel API:', e.message);
+        console.error('[Quasar] Erreur refresh panel API:', e.message);
     }
 }
 

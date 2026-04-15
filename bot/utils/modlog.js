@@ -13,7 +13,7 @@ async function sendModLog(guild, embed) {
     const channel = guild.channels.cache.get(config.logChannel);
     if (channel) {
         await channel.send({ embeds: [embed] }).catch(err => {
-            console.error('[Atom] Erreur envoi log:', err.message);
+            console.error('[Quasar] Erreur envoi log:', err.message);
         });
     }
 }

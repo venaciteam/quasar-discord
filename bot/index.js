@@ -36,12 +36,12 @@ function createBot() {
                 const command = mod[key];
                 if (command?.data && command?.execute) {
                     client.commands.set(command.data.name, command);
-                    console.log(`[Atom] Commande chargée: /${command.data.name}`);
+                    console.log(`[Quasar] Commande chargée: /${command.data.name}`);
                 }
             }
         } else if (mod.data && mod.execute) {
             client.commands.set(mod.data.name, mod);
-            console.log(`[Atom] Commande chargée: /${mod.data.name}`);
+            console.log(`[Quasar] Commande chargée: /${mod.data.name}`);
         }
     }
 
@@ -56,7 +56,7 @@ function createBot() {
             } else {
                 client.on(event.name, (...args) => event.execute(...args));
             }
-            console.log(`[Atom] Event chargé: ${event.name}`);
+            console.log(`[Quasar] Event chargé: ${event.name}`);
         }
     }
 
@@ -80,7 +80,7 @@ function createBot() {
 
             const command = client.commands.get(interaction.commandName);
             if (command?.autocomplete) {
-                try { await command.autocomplete(interaction); } catch (e) { console.error('[Atom] Autocomplete error:', e); }
+                try { await command.autocomplete(interaction); } catch (e) { console.error('[Quasar] Autocomplete error:', e); }
             }
             return;
         }
@@ -89,7 +89,7 @@ function createBot() {
         if (interaction.isButton() || interaction.isUserSelectMenu() || interaction.isStringSelectMenu() || interaction.isModalSubmit()) {
             if (interaction.customId.startsWith('tv_')) {
                 try { await handleTempVoiceInteraction(interaction); } catch (e) {
-                    console.error('[Atom] Erreur interaction TempVoice:', e);
+                    console.error('[Quasar] Erreur interaction TempVoice:', e);
                     if (!interaction.replied && !interaction.deferred) {
                         interaction.reply({ content: '❌ Une erreur est survenue.', ephemeral: true }).catch(() => {});
                     }
@@ -99,7 +99,7 @@ function createBot() {
 
             if (interaction.customId.startsWith('ticket_')) {
                 try { await handleTicketInteraction(interaction); } catch (e) {
-                    console.error('[Atom] Erreur interaction Ticket:', e);
+                    console.error('[Quasar] Erreur interaction Ticket:', e);
                     if (!interaction.replied && !interaction.deferred) {
                         interaction.reply({ content: '❌ Une erreur est survenue.', ephemeral: true }).catch(() => {});
                     }
@@ -133,7 +133,7 @@ function createBot() {
                         return interaction.reply({ content: customCmd.response });
                     }
                 } catch (err) {
-                    console.error('[Atom] Erreur commande custom:', err);
+                    console.error('[Quasar] Erreur commande custom:', err);
                 }
             }
             return;
@@ -154,9 +154,9 @@ function createBot() {
                     { name: 'Channel', value: `<#${interaction.channel?.id}>`, inline: true }
                 )
                 .setTimestamp();
-            sendLog(interaction.guild, 'atom_command', cmdEmbed).catch(() => {});
+            sendLog(interaction.guild, 'quasar_command', cmdEmbed).catch(() => {});
         } catch (error) {
-            console.error(`[Atom] Erreur commande /${interaction.commandName}:`, error);
+            console.error(`[Quasar] Erreur commande /${interaction.commandName}:`, error);
             const reply = { content: '❌ Une erreur est survenue.', ephemeral: true };
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp(reply);
@@ -167,18 +167,18 @@ function createBot() {
     });
 
     client.once('ready', async () => {
-        console.log(`[Atom] Connecté en tant que ${client.user.tag}`);
-        console.log(`[Atom] Présent sur ${client.guilds.cache.size} serveur(s)`);
+        console.log(`[Quasar] Connecté en tant que ${client.user.tag}`);
+        console.log(`[Quasar] Présent sur ${client.guilds.cache.size} serveur(s)`);
 
         // Stats — Heartbeat vers le hub central
         if (process.env.STATS_URL && process.env.STATS_ENABLED !== 'false') {
             const crypto = require('crypto');
             const db = getDb();
             // Générer un ID instance unique au premier boot
-            let row = db.prepare("SELECT name FROM guilds WHERE guild_id = '__atom_instance_id'").get();
+            let row = db.prepare("SELECT name FROM guilds WHERE guild_id = '__quasar_instance_id'").get();
             if (!row) {
                 const id = crypto.randomUUID();
-                db.prepare("INSERT OR IGNORE INTO guilds (guild_id, name) VALUES ('__atom_instance_id', ?)").run(id);
+                db.prepare("INSERT OR IGNORE INTO guilds (guild_id, name) VALUES ('__quasar_instance_id', ?)").run(id);
                 row = { name: id };
             }
             const instanceId = row.name;
@@ -194,7 +194,7 @@ function createBot() {
 
             sendHeartbeat();
             setInterval(sendHeartbeat, 10 * 60 * 1000);
-            console.log('[Atom] Stats heartbeat activé');
+            console.log('[Quasar] Stats heartbeat activé');
         }
 
         // Enregistrer les guilds en DB
@@ -217,7 +217,7 @@ function createBot() {
                         status: presence.status,
                         activities: []
                     });
-                    console.log(`[Atom] Présence chargée: ${presence.status} (aucune activité)`);
+                    console.log(`[Quasar] Présence chargée: ${presence.status} (aucune activité)`);
                 } else {
                     client.user.setPresence({
                         status: presence.status,
@@ -226,15 +226,15 @@ function createBot() {
                             type: presence.activity_type
                         }]
                     });
-                    console.log(`[Atom] Présence chargée: ${presence.status} — ${presence.activity_text}`);
+                    console.log(`[Quasar] Présence chargée: ${presence.status} — ${presence.activity_text}`);
                 }
             } else {
-                client.user.setActivity('app.vena.city', { type: 3 });
-                console.log('[Atom] Présence par défaut: Watching app.vena.city');
+                client.user.setActivity('atlas.vena.city', { type: 3 });
+                console.log('[Quasar] Présence par défaut: Watching atlas.vena.city');
             }
         } catch (e) {
-            client.user.setActivity('app.vena.city', { type: 3 });
-            console.log('[Atom] Présence fallback (erreur DB):', e.message);
+            client.user.setActivity('atlas.vena.city', { type: 3 });
+            console.log('[Quasar] Présence fallback (erreur DB):', e.message);
         }
 
         // TempVoice — Charger les IDs actifs dans le Set (pour filtrage channelCreate/Delete)
@@ -242,9 +242,9 @@ function createBot() {
             const { tempvoiceChannelIds } = require('./events/voiceStateUpdate');
             const allActive = db.prepare('SELECT channel_id FROM tempvoice_active').all();
             for (const row of allActive) tempvoiceChannelIds.add(row.channel_id);
-            if (allActive.length > 0) console.log(`[Atom] TempVoice: ${allActive.length} ID(s) chargé(s) dans le tracker`);
+            if (allActive.length > 0) console.log(`[Quasar] TempVoice: ${allActive.length} ID(s) chargé(s) dans le tracker`);
         } catch (e) {
-            console.error('[Atom] Erreur chargement TempVoice IDs:', e.message || e);
+            console.error('[Quasar] Erreur chargement TempVoice IDs:', e.message || e);
         }
 
         // TempVoice — Nettoyage des vocaux orphelins au boot
@@ -260,7 +260,7 @@ function createBot() {
                     cleaned++;
                 }
             }
-            if (cleaned > 0) console.log(`[Atom] TempVoice boot cleanup: ${cleaned} salon(s) orphelin(s) supprimé(s)`);
+            if (cleaned > 0) console.log(`[Quasar] TempVoice boot cleanup: ${cleaned} salon(s) orphelin(s) supprimé(s)`);
         } catch (e) {
             // Tables pas encore créées au premier boot, on ignore
         }

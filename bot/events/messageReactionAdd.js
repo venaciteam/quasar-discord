@@ -65,7 +65,7 @@ module.exports = {
                 if (msg) setTimeout(() => msg.delete().catch(() => {}), 4000);
             }
         } catch (e) {
-            console.error('[Atom] Erreur toggle rôle réaction:', e.message);
+            console.error('[Quasar] Erreur toggle rôle réaction:', e.message);
         }
     }
 };

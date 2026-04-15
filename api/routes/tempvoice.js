@@ -112,7 +112,7 @@ router.delete('/active/:channelId', requireAuth, requireGuildAdmin, async (req, 
 
     if (channel) {
         try { await channel.delete(); } catch (e) {
-            console.error('[Atom] Erreur suppression TempVoice:', e.message);
+            console.error('[Quasar] Erreur suppression TempVoice:', e.message);
         }
     }
 

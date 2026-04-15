@@ -110,7 +110,7 @@ module.exports = {
                     .get(guild.id, oldChannelId);
                 if (voiceRole) {
                     try { await member.roles.remove(voiceRole.role_id); } catch (e) {
-                        console.error('[Atom] Erreur retrait rôle vocal:', e.message);
+                        console.error('[Quasar] Erreur retrait rôle vocal:', e.message);
                     }
                 }
             }
@@ -120,7 +120,7 @@ module.exports = {
                     .get(guild.id, newChannelId);
                 if (voiceRole) {
                     try { await member.roles.add(voiceRole.role_id); } catch (e) {
-                        console.error('[Atom] Erreur ajout rôle vocal:', e.message);
+                        console.error('[Quasar] Erreur ajout rôle vocal:', e.message);
                     }
                 }
             }
@@ -166,7 +166,7 @@ module.exports = {
                     await createTempVoice(guild, member, newState.channel, categoryId, db);
                 }
             } catch (e) {
-                console.error('[Atom] Erreur TempVoice création:', e);
+                console.error('[Quasar] Erreur TempVoice création:', e);
             }
         }
 
@@ -187,7 +187,7 @@ module.exports = {
                         db.prepare('DELETE FROM tempvoice_active WHERE channel_id = ?').run(oldChannelId);
                         // Keep in Set briefly so channelDelete can filter it
                         setTimeout(() => tempvoiceChannelIds.delete(oldChannelId), 5000);
-                        console.log(`[Atom] TempVoice supprimé: ${oldChannelId}`);
+                        console.log(`[Quasar] TempVoice supprimé: ${oldChannelId}`);
 
                         // Log unique suppression
                         const owner = guild.members.cache.get(isTemp.owner_id);
@@ -205,7 +205,7 @@ module.exports = {
                     }
                 }
             } catch (e) {
-                console.error('[Atom] Erreur TempVoice suppression:', e);
+                console.error('[Quasar] Erreur TempVoice suppression:', e);
             }
         }
     }
@@ -245,7 +245,7 @@ async function createTempVoice(guild, member, triggerChannel, categoryId, db) {
     db.prepare('INSERT INTO tempvoice_active (channel_id, guild_id, owner_id, category_id) VALUES (?, ?, ?, ?)')
         .run(channel.id, guild.id, member.id, categoryId);
 
-    console.log(`[Atom] TempVoice créé: "${channelName}" pour ${member.user.tag} (catégorie: ${categoryId || 'aucune'})`);
+    console.log(`[Quasar] TempVoice créé: "${channelName}" pour ${member.user.tag} (catégorie: ${categoryId || 'aucune'})`);
 
     // Log unique TempVoice
     const tvEmbed = new EmbedBuilder()
@@ -313,6 +313,6 @@ async function createTempVoice(guild, member, triggerChannel, categoryId, db) {
             components: [row1, row2]
         });
     } catch (e) {
-        console.error('[Atom] Erreur envoi panneau TempVoice:', e.message || e);
+        console.error('[Quasar] Erreur envoi panneau TempVoice:', e.message || e);
     }
 }

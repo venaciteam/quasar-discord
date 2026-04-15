@@ -43,7 +43,7 @@
       // URL du webhook Discord (à configurer par service)
       discordWebhookUrl: '',
       // Nom du service courant (à configurer par service)
-      serviceName: 'VenacityOS',
+      serviceName: 'Venacity',
       // Version du service courant
       serviceVersion: '1.0.0',
     },
@@ -397,7 +397,7 @@
           VNCT.Modal.open({
             title: '💡 C\'est quoi ' + VNCT.config.serviceName + ' ?',
             body: document.querySelector('[data-kesako-content]')?.innerHTML
-              || '<p>Bienvenue sur ' + VNCT.config.serviceName + ' !</p><p>Ce service fait partie de l\'écosystème VenacityOS.</p>',
+              || '<p>Bienvenue sur ' + VNCT.config.serviceName + ' !</p><p>Ce service fait partie de l\'écosystème Venacity.</p>',
             isHtml: true,
           });
           break;
@@ -913,7 +913,7 @@
     async sendFeedback(type, data) {
       // Envoie via le relay local /api/feedback/vnct qui forward au DevPortal.
       // Pas d'appel direct à dev.vena.city — évite les problèmes de CORS
-      // et permet à chaque instance Atom de remonter les reports.
+      // et permet à chaque instance Quasar de remonter les reports.
       const relayUrl = VNCT.config.discordWebhookUrl || '/api/feedback/vnct';
 
       const techInfo = VNCT.FAB._getTechInfo();

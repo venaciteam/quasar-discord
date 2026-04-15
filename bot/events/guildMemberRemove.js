@@ -37,7 +37,7 @@ module.exports = {
                 await channel.send({ content });
             }
         } catch (e) {
-            console.error('[Atom] Erreur message leave:', e.message);
+            console.error('[Quasar] Erreur message leave:', e.message);
         }
     }
 };

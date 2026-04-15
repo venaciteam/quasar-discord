@@ -1,7 +1,7 @@
 {
-  "name": "atom-bot",
-  "version": "0.2.4",
-  "description": "Atom — Bot Discord custom avec dashboard web",
+  "name": "quasar-bot",
+  "version": "0.2.5",
+  "description": "Quasar — Bot Discord custom avec dashboard web",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

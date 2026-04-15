@@ -3,7 +3,7 @@ const { requireAuth, requireGuildAdmin } = require('../middleware/auth');
 const { getDb } = require('../services/database');
 const router = express.Router();
 
-// Liste des serveurs où l'utilisateur est admin ET où Atom est présent
+// Liste des serveurs où l'utilisateur est admin ET où Quasar est présent
 router.get('/', requireAuth, (req, res) => {
     const db = getDb();
     const botGuilds = db.prepare('SELECT guild_id, name FROM guilds').all();
@@ -96,7 +96,7 @@ router.get('/:guildId/channels', requireAuth, requireGuildAdmin, async (req, res
 
         res.json(channels);
     } catch (error) {
-        console.error('[Atom] Erreur channels:', error);
+        console.error('[Quasar] Erreur channels:', error);
         res.json([]);
     }
 });
@@ -114,7 +114,7 @@ router.get('/:guildId/roles', requireAuth, requireGuildAdmin, async (req, res) =
 
         res.json(roles);
     } catch (error) {
-        console.error('[Atom] Erreur rôles:', error);
+        console.error('[Quasar] Erreur rôles:', error);
         res.json([]);
     }
 });

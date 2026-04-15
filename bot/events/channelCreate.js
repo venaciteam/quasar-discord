@@ -16,7 +16,7 @@ module.exports = {
                     .get(channel.guild.id, channel.parentId);
                 if (hasTrigger) return;
             } catch (e) {
-                console.error('[Atom] Erreur vérification TempVoice (channelCreate):', e.message || e);
+                console.error('[Quasar] Erreur vérification TempVoice (channelCreate):', e.message || e);
             }
         }
 

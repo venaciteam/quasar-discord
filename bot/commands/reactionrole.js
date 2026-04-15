@@ -120,7 +120,7 @@ module.exports = {
             try {
                 await refreshPanel(interaction.guild, panel.channel_id, panel.message_id, panelId, db);
             } catch (e) {
-                console.error('[Atom] Erreur refresh panel:', e.message);
+                console.error('[Quasar] Erreur refresh panel:', e.message);
                 await interaction.followUp({ content: `⚠️ Le rôle a été ajouté, mais le panel n'a pas pu être mis à jour : ${e.message}`, ephemeral: true });
             }
 
@@ -140,7 +140,7 @@ module.exports = {
             try {
                 await refreshPanel(interaction.guild, panel.channel_id, panel.message_id, panelId, db);
             } catch (e) {
-                console.error('[Atom] Erreur refresh panel:', e.message);
+                console.error('[Quasar] Erreur refresh panel:', e.message);
                 await interaction.followUp({ content: `⚠️ L'emoji a été retiré, mais le panel n'a pas pu être mis à jour : ${e.message}`, ephemeral: true });
             }
 
@@ -227,6 +227,6 @@ async function refreshPanel(guild, channelId, messageId, panelId, db) {
             }
         }
     } catch (e) {
-        console.error('[Atom] Erreur refresh panel:', e.message);
+        console.error('[Quasar] Erreur refresh panel:', e.message);
     }
 }

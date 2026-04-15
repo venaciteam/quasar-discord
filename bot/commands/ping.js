@@ -3,7 +3,7 @@ const { SlashCommandBuilder } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('ping')
-        .setDescription('Vérifier si Atom est en ligne'),
+        .setDescription('Vérifier si Quasar est en ligne'),
     
     async execute(interaction) {
         const latency = Date.now() - interaction.createdTimestamp;

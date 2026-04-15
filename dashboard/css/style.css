@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════ */
-/*   Atom Dashboard — Styles specifiques                              */
+/*   Quasar Dashboard — Styles specifiques                              */
 /*   Depend de vnct-design-system.css (charge avant ce fichier)       */
 /*   Aucune variable de couleur ici — tout vient du DS                */
 /* ═══════════════════════════════════════════════════════════════════ */
@@ -25,8 +25,8 @@
     to { transform: rotate(360deg); }
 }
 
-/* ═══ Atom logo icon ═══ */
-.atom-logo-icon {
+/* ═══ Quasar logo icon ═══ */
+.quasar-logo-icon {
     height: 1.2em;
     width: 1.2em;
     object-fit: contain;
@@ -56,15 +56,16 @@
 
 /* Brand — accent unique, plus de gradient */
 .landing-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
+    text-align: center;
     font-size: var(--text-3xl);
     font-weight: var(--font-bold);
-    color: var(--accent);
+    color: var(--text-primary);
     letter-spacing: -2px;
     animation: vnct-appear-hero 650ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.landing-logo span {
+    color: var(--accent);
 }
 
 .landing-subtitle {
@@ -298,11 +299,12 @@
 
 /* Brand — accent unique */
 .sidebar-brand {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
     font-size: var(--text-lg);
     font-weight: var(--font-bold);
+    color: var(--text-primary);
+}
+
+.sidebar-brand span {
     color: var(--accent);
 }
 

@@ -1,8 +1,8 @@
-# ⚛ Atom — Bot Discord Self-Hosted
+# 🌌 Quasar — Bot Discord Self-Hosted
 
 > Toutes les fonctionnalités premium d'un bot Discord — modération, tickets, musique, reaction roles, embeds, TempVoice et dashboard web. 100% self-hosted, open source, 0 abonnement.
 
-![Atom Dashboard Preview](dashboard/img/preview.png)
+![Quasar Dashboard Preview](dashboard/img/preview.png)
 
 ---
 
@@ -34,14 +34,14 @@
 ### Installation en une commande
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/venaciteam/atom-discord/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/venaciteam/quasar-discord/main/install.sh | bash
 ```
 
 Ou manuellement :
 
 ```bash
-git clone https://github.com/venaciteam/atom-discord.git
-cd atom-discord
+git clone https://github.com/venaciteam/quasar-discord.git
+cd quasar-discord
 ./setup.sh
 ```
 
@@ -55,8 +55,8 @@ Le script te guide : il demande tes identifiants Discord, crée le `.env`, le vo
 #### 1. Cloner le repo
 
 ```bash
-git clone https://github.com/venaciteam/atom-discord.git
-cd atom-discord
+git clone https://github.com/venaciteam/quasar-discord.git
+cd quasar-discord
 ```
 
 #### 2. Configurer
@@ -94,11 +94,11 @@ Sur le [Developer Portal](https://discord.com/developers/applications) :
 #### 4. Créer le volume et lancer
 
 ```bash
-docker volume create atom-data
+docker volume create quasar-data
 docker compose up -d
 ```
 
-Le bot est en ligne. L'adresse du dashboard (locale + réseau) s'affiche dans les logs : `docker logs atom`.
+Le bot est en ligne. L'adresse du dashboard (locale + réseau) s'affiche dans les logs : `docker logs quasar`.
 
 </details>
 
@@ -124,10 +124,10 @@ Sur le Developer Portal → **OAuth2 → URL Generator** :
 
 ## 🍓 Raspberry Pi
 
-Atom tourne confortablement sur un **Raspberry Pi 4** (2 Go minimum). La stack est légère : Node.js + SQLite, pas de base de données externe.
+Quasar tourne confortablement sur un **Raspberry Pi 4** (2 Go minimum). La stack est légère : Node.js + SQLite, pas de base de données externe.
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/venaciteam/atom-discord/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/venaciteam/quasar-discord/main/install.sh | bash
 ```
 
 > **Note :** Le build initial peut prendre quelques minutes sur Pi (compilation des modules natifs comme `better-sqlite3` et `sodium-native`).
@@ -208,7 +208,7 @@ curl -sSL https://raw.githubusercontent.com/venaciteam/atom-discord/main/install
 
 ## ⬆ Mise à jour
 
-Atom vérifie automatiquement les nouvelles versions sur GitHub. Quand une mise à jour est disponible, un bandeau apparaît dans le dashboard. Clique sur "Mettre à jour" pour lancer le processus avec un terminal temps réel. En cas d'échec, un rollback automatique restaure la version précédente.
+Quasar vérifie automatiquement les nouvelles versions sur GitHub. Quand une mise à jour est disponible, un bandeau apparaît dans le dashboard. Clique sur "Mettre à jour" pour lancer le processus avec un terminal temps réel. En cas d'échec, un rollback automatique restaure la version précédente.
 
 Le système supporte les deux modes de déploiement :
 - **Docker** : git pull + rebuild image + restart container
@@ -230,7 +230,7 @@ Le système supporte les deux modes de déploiement :
 ## 📂 Structure du projet
 
 ```
-atom-discord/
+quasar-discord/
 ├── index.js              # Point d'entrée
 ├── setup.sh              # Script d'installation
 ├── bot/

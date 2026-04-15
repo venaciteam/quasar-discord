@@ -70,7 +70,7 @@ async function handleTicketInteraction(interaction) {
         try {
             ticketChannel = await interaction.guild.channels.create(channelOptions);
         } catch (e) {
-            console.error('[Atom] Erreur création ticket channel:', e);
+            console.error('[Quasar] Erreur création ticket channel:', e);
             return interaction.reply({ content: '❌ Impossible de créer le ticket. Vérifie mes permissions.', ephemeral: true });
         }
 

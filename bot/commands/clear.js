@@ -37,7 +37,7 @@ module.exports = {
                 });
             }
         } catch (e) {
-            console.error('[Atom] Clear error:', e);
+            console.error('[Quasar] Clear error:', e);
             await interaction.editReply({ content: '❌ Erreur. Les messages de +14 jours ne peuvent pas être supprimés en masse.' });
         }
     }

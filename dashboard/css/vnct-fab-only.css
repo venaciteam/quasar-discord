@@ -1,6 +1,6 @@
 /* ============================================================================
-   VNCT FAB + Modals — Subset du Design System pour Atom
-   Atom a son propre CSS complet, on ne charge que les composants VNCT nécessaires.
+   VNCT FAB + Modals — Subset du Design System pour Quasar
+   Quasar a son propre CSS complet, on ne charge que les composants VNCT nécessaires.
    ============================================================================ */
 
 /* Variables nécessaires au FAB */
@@ -80,7 +80,7 @@
 }
 [data-theme="light"] .vnct-version-badge { color: #9090a5; }
 
-/* Atom utilise ses propres variables de couleur */
+/* Quasar utilise ses propres variables de couleur */
 .vnct-fab { --bg-glass: rgba(18, 18, 26, 0.7); --border-default: rgba(255, 255, 255, 0.08); --text-primary: #f0f0f5; --text-secondary: #a0a0b5; --text-muted: #606075; --bg-secondary: #12121a; --bg-tertiary: #1a1a28; --surface-hover: rgba(255, 255, 255, 0.05); --surface-active: rgba(255, 255, 255, 0.08); }
 .vnct-fab-menu { --bg-glass: rgba(18, 18, 26, 0.7); --border-default: rgba(255, 255, 255, 0.08); --text-primary: #f0f0f5; }
 .vnct-fab-overlay { --border-default: rgba(255, 255, 255, 0.08); }

@@ -76,17 +76,17 @@ async function checkAutoSanctions(interaction, target, member, warnCount) {
         try {
             await member.ban({ reason: `Auto-ban : ${warnCount} avertissements atteints` });
             await interaction.followUp({ content: `🔴 ${target} a été **banni automatiquement** (${warnCount} warns).` });
-        } catch (e) { console.error('[Atom] Auto-ban failed:', e); }
+        } catch (e) { console.error('[Quasar] Auto-ban failed:', e); }
     } else if (auto.kickAt && warnCount >= auto.kickAt) {
         try {
             await member.kick(`Auto-kick : ${warnCount} avertissements atteints`);
             await interaction.followUp({ content: `🟠 ${target} a été **kick automatiquement** (${warnCount} warns).` });
-        } catch (e) { console.error('[Atom] Auto-kick failed:', e); }
+        } catch (e) { console.error('[Quasar] Auto-kick failed:', e); }
     } else if (auto.muteAt && warnCount >= auto.muteAt) {
         const duration = (auto.muteDuration || 60) * 60 * 1000; // minutes → ms
         try {
             await member.timeout(duration, `Auto-mute : ${warnCount} avertissements atteints`);
             await interaction.followUp({ content: `🟡 ${target} a été **mute automatiquement** pour ${auto.muteDuration || 60} min (${warnCount} warns).` });
-        } catch (e) { console.error('[Atom] Auto-mute failed:', e); }
+        } catch (e) { console.error('[Quasar] Auto-mute failed:', e); }
     }
 }

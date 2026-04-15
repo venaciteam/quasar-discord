@@ -23,7 +23,7 @@ const PORT = process.env.PORT || 3050;
 async function main() {
     const version = require('./package.json').version;
     console.log('╔══════════════════════════════════╗');
-    console.log(`║        ⚛  Atom Bot v${version.padEnd(12)}║`);
+    console.log(`║        🌌  Quasar Bot v${version.padEnd(12)}║`);
     console.log('╚══════════════════════════════════╝');
 
     // Créer et démarrer le bot Discord
@@ -33,14 +33,14 @@ async function main() {
     // Créer et démarrer l'API + dashboard
     const app = createApi(client);
     app.listen(PORT, '0.0.0.0', () => {
-        console.log(`[Atom] Dashboard: http://localhost:${PORT}`);
+        console.log(`[Quasar] Dashboard: http://localhost:${PORT}`);
 
         // Afficher l'URL réseau local
         const nets = require('os').networkInterfaces();
         for (const iface of Object.values(nets)) {
             for (const addr of iface) {
                 if (addr.family === 'IPv4' && !addr.internal) {
-                    console.log(`[Atom] Réseau local: http://${addr.address}:${PORT}`);
+                    console.log(`[Quasar] Réseau local: http://${addr.address}:${PORT}`);
                 }
             }
         }
@@ -51,6 +51,6 @@ async function main() {
 }
 
 main().catch(err => {
-    console.error('[Atom] Erreur fatale:', err);
+    console.error('[Quasar] Erreur fatale:', err);
     process.exit(1);
 });

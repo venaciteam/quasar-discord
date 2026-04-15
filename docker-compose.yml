@@ -1,17 +1,17 @@
 services:
-  atom:
+  quasar:
     build: .
-    container_name: atom
+    container_name: quasar
     restart: unless-stopped
     ports:
       - "${PORT:-3050}:${PORT:-3050}"
     volumes:
-      - atom-data:/app/data
+      - quasar-data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
       - .:/host-app
     env_file: .env
     environment:
-      - ATOM_HOST_DIR=/host-app
+      - QUASAR_HOST_DIR=/host-app
     logging:
       driver: "json-file"
       options:
@@ -19,5 +19,5 @@ services:
         max-file: "3"
 
 volumes:
-  atom-data:
+  quasar-data:
     external: true

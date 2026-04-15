@@ -1,6 +1,6 @@
 {
-  "name": "Atom Dashboard",
-  "short_name": "Atom",
+  "name": "Quasar Dashboard",
+  "short_name": "Quasar",
   "description": "Bot Discord custom — dashboard de configuration",
   "start_url": "/dashboard/app.html",
   "display": "standalone",

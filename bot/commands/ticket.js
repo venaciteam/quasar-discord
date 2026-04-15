@@ -262,7 +262,7 @@ async function closeTicket(interaction, reason) {
         try {
             await interaction.channel.delete();
         } catch (e) {
-            console.error('[Atom] Erreur suppression ticket:', e.message);
+            console.error('[Quasar] Erreur suppression ticket:', e.message);
         }
     }, 5000);
 }

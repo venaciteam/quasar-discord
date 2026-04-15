@@ -1,6 +1,6 @@
 #!/bin/bash
 # ═══════════════════════════════════
-#   Atom — Script d'installation
+#   Quasar — Script d'installation
 # ═══════════════════════════════════
 
 set -e
@@ -12,7 +12,7 @@ CYAN="\033[0;36m"
 NC="\033[0m"
 
 echo -e "${CYAN}"
-echo "  ⚛  Atom — Installation"
+echo "  🌌  Quasar — Installation"
 echo "  ═══════════════════════"
 echo -e "${NC}"
 
@@ -78,11 +78,11 @@ else
 fi
 
 # Créer le volume Docker
-if ! docker volume inspect atom-data &> /dev/null 2>&1; then
-    docker volume create atom-data
-    echo -e "${GREEN}✅ Volume atom-data créé${NC}"
+if ! docker volume inspect quasar-data &> /dev/null 2>&1; then
+    docker volume create quasar-data
+    echo -e "${GREEN}✅ Volume quasar-data créé${NC}"
 else
-    echo -e "${GREEN}✅ Volume atom-data existant${NC}"
+    echo -e "${GREEN}✅ Volume quasar-data existant${NC}"
 fi
 
 # Build et lancement
@@ -91,16 +91,16 @@ echo -e "${CYAN}🔨 Build de l'image Docker...${NC}"
 docker compose build
 
 echo ""
-echo -e "${CYAN}🚀 Lancement d'Atom...${NC}"
+echo -e "${CYAN}🚀 Lancement d'Quasar...${NC}"
 docker compose up -d
 
 echo ""
 echo -e "${GREEN}═══════════════════════════════════${NC}"
-echo -e "${GREEN}  ✅ Atom est en ligne !${NC}"
+echo -e "${GREEN}  ✅ Quasar est en ligne !${NC}"
 echo -e "${GREEN}═══════════════════════════════════${NC}"
 echo ""
 echo -e "  Dashboard : ${CYAN}http://localhost:${PORT:-3050}${NC}"
-echo -e "  Logs      : ${CYAN}docker logs atom${NC}"
+echo -e "  Logs      : ${CYAN}docker logs quasar${NC}"
 echo ""
 echo -e "${YELLOW}  N'oublie pas d'inviter le bot sur ton serveur Discord !${NC}"
 echo -e "  → Developer Portal → OAuth2 → URL Generator"

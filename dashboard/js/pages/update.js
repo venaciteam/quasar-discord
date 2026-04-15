@@ -1,5 +1,5 @@
 // ═══════════════════════════════════
-//        Atom — Page Mise à jour
+//        Quasar — Page Mise à jour
 // ═══════════════════════════════════
 
 // eslint-disable-next-line no-unused-vars
@@ -22,7 +22,7 @@ async function loadUpdate(container) {
     container.innerHTML = `
         <div class="main-header">
             <h1 class="main-title">Mise à jour</h1>
-            <p class="main-subtitle">Gestion des versions d'Atom</p>
+            <p class="main-subtitle">Gestion des versions d'Quasar</p>
         </div>
 
         <div class="card">
@@ -61,11 +61,11 @@ async function loadUpdate(container) {
                 Pour utiliser la mise à jour automatique en Docker, ajoutez ces volumes à votre <code>docker-compose.yml</code> :
             </p>
             <pre class="update-terminal" style="margin-top:.75rem;max-height:none">volumes:
-  - atom-data:/app/data
+  - quasar-data:/app/data
   - /var/run/docker.sock:/var/run/docker.sock
   - .:/host-app
 environment:
-  - ATOM_HOST_DIR=/host-app</pre>
+  - QUASAR_HOST_DIR=/host-app</pre>
         </div>` : ''}
 
         <div id="update-action" class="card">
@@ -74,7 +74,7 @@ environment:
                     Lancer la mise à jour — v${data.local} → v${data.remote}
                 </button>
             ` : !hasUpdate ? `
-                <p style="color:var(--text-secondary);font-size:.85rem;text-align:center">Atom est à jour.</p>
+                <p style="color:var(--text-secondary);font-size:.85rem;text-align:center">Quasar est à jour.</p>
             ` : `
                 <p style="color:var(--text-secondary);font-size:.85rem;text-align:center">Configurez l'environnement Docker pour activer la mise à jour automatique.</p>
             `}
@@ -179,7 +179,7 @@ function waitForRestart() {
 
                 const line = document.createElement('div');
                 line.className = 'log-success';
-                line.textContent = `✓ Atom v${data.local} opérationnel.`;
+                line.textContent = `✓ Quasar v${data.local} opérationnel.`;
                 logPre.appendChild(line);
                 logPre.scrollTop = logPre.scrollHeight;
 

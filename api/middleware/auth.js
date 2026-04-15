@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'atom-secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'quasar-secret';
 
 function generateToken(user) {
     return jwt.sign({

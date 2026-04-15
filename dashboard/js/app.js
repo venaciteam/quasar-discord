@@ -1,22 +1,22 @@
 // ═══════════════════════════════════
-//          Atom Dashboard App
+//          Quasar Dashboard App
 // ═══════════════════════════════════
 
 // Récupérer et stocker le token depuis l'URL si présent
 const urlParams = new URLSearchParams(window.location.search);
 const urlToken = urlParams.get('token');
 if (urlToken) {
-    localStorage.setItem('atom_token', urlToken);
+    localStorage.setItem('quasar_token', urlToken);
     // Nettoyer l'URL
     window.history.replaceState({}, '', '/dashboard/app.html');
 }
 
-const getToken = () => localStorage.getItem('atom_token');
+const getToken = () => localStorage.getItem('quasar_token');
 
 const API = {
     async get(url) {
         const res = await fetch(url, { headers: { 'Authorization': `Bearer ${getToken()}` } });
-        if (res.status === 401) { localStorage.removeItem('atom_token'); window.location.href = '/'; return null; }
+        if (res.status === 401) { localStorage.removeItem('quasar_token'); window.location.href = '/'; return null; }
         return res.json();
     },
     async put(url, data) {
@@ -65,7 +65,7 @@ let guilds = [];
 async function init() {
     if (!getToken()) { window.location.href = '/'; return; }
     const auth = await API.get('/auth/me');
-    if (!auth?.authenticated) { localStorage.removeItem('atom_token'); window.location.href = '/'; return; }
+    if (!auth?.authenticated) { localStorage.removeItem('quasar_token'); window.location.href = '/'; return; }
 
     currentUser = auth.user;
     renderUserInfo();
@@ -136,7 +136,7 @@ function showNoGuilds() {
     document.getElementById('content').innerHTML = `
         <div class="main-header">
             <h1 class="main-title">Aucun serveur</h1>
-            <p class="main-subtitle">Atom n'est sur aucun serveur où tu es administrateur.</p>
+            <p class="main-subtitle">Quasar n'est sur aucun serveur où tu es administrateur.</p>
         </div>
     `;
 }
@@ -245,7 +245,7 @@ async function getPresenceHtml() {
                     </div>
                     <div class="presence-field presence-field-text">
                         <label class="presence-label">Texte</label>
-                        <input type="text" class="input" id="presence-activity-text" maxlength="128" placeholder="app.vena.city" value="${data.activity_text.replace(/"/g, '&quot;')}" ${noActivity ? 'disabled style="opacity:.4"' : ''}>
+                        <input type="text" class="input" id="presence-activity-text" maxlength="128" placeholder="atlas.vena.city" value="${data.activity_text.replace(/"/g, '&quot;')}" ${noActivity ? 'disabled style="opacity:.4"' : ''}>
                     </div>
                     <div class="presence-field presence-field-btn">
                         <button class="btn btn-primary" id="presence-save">Appliquer</button>
@@ -408,7 +408,7 @@ async function loadOverview(container) {
     container.innerHTML = `
         <div class="main-header">
             <h1 class="main-title">Vue d'ensemble ✨</h1>
-            <p class="main-subtitle">Gère les modules d'Atom sur ${currentGuild.name}</p>
+            <p class="main-subtitle">Gère les modules d'Quasar sur ${currentGuild.name}</p>
         </div>
         ${presenceHtml}
         <div class="modules-grid">
