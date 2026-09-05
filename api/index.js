@@ -5,6 +5,7 @@ const fs = require('fs');
 const assetVersion = require('./services/assetVersion');
 const vnctDs = require('./services/vnctDs');
 const nouveautes = require('./services/nouveautes');
+const { errorHandler } = require('./middleware/errorHandler');
 
 const DASHBOARD_DIR = path.join(__dirname, '..', 'dashboard');
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -115,6 +116,29 @@ function mountFeedbackRelay(app) {
 
 function isPublicInstanceOpen() {
     return (process.env.PUBLIC_INSTANCE_OPEN || '').trim().toLowerCase() === 'true';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Lecture du corps des requêtes — commune aux deux applications
+//
+//  Express 5 laisse `req.body` à `undefined` quand aucun parseur ne reconnaît
+//  le Content-Type, là où Express 4 posait un objet vide. Les routes, elles,
+//  déstructurent directement (`const { name } = req.body`) : sans la ligne de
+//  compatibilité ci-dessous, une requête sans corps ou mal typée ne produirait
+//  plus une validation propre en 400, mais une exception.
+//
+//  Le rattrapage est fait ICI, une fois, plutôt que par une garde sur chacun
+//  des accès : le jour où une route est ajoutée sans garde, elle est couverte
+//  malgré tout. Même raisonnement que pour le gestionnaire d'erreurs — une
+//  protection qui dépend de la mémoire de qui code finit par manquer.
+// ═══════════════════════════════════════════════════════════════
+
+function mountBodyParsers(app) {
+    app.use(express.json());
+    app.use((req, _res, next) => {
+        if (req.body === undefined) req.body = {};
+        next();
+    });
 }
 
 /**
@@ -286,7 +310,7 @@ function createApi(discordClient, mode = 'bot') {
     const app = express();
 
     // Middleware
-    app.use(express.json());
+    mountBodyParsers(app);
     app.use(cookieParser());
 
     // Rendre le client Discord accessible aux routes
@@ -367,6 +391,11 @@ function createApi(discordClient, mode = 'bot') {
         });
     }
 
+    // DERNIER de la chaîne, sans exception : Express ne transmet une erreur
+    // qu'aux middlewares déclarés APRÈS la route qui l'a produite. Monté plus
+    // haut, il ne verrait rien.
+    app.use(errorHandler);
+
     return app;
 }
 
@@ -378,7 +407,7 @@ function createApi(discordClient, mode = 'bot') {
 function createSiteApi(mode) {
     const app = express();
 
-    app.use(express.json());
+    mountBodyParsers(app);
 
     // Seule route d'API conservée : le relais de signalement, dont le FAB de la
     // vitrine se sert en repli quand Sema est injoignable. Il ne dépend ni du
@@ -395,6 +424,11 @@ function createSiteApi(mode) {
     });
 
     mountVitrine(app, mode);
+
+    // Même filet sur la vitrine : elle rend des pages via le design system
+    // distant, dont l'indisponibilité ne doit pas produire une pile d'appel
+    // affichée au public.
+    app.use(errorHandler);
 
     return app;
 }

@@ -49,7 +49,7 @@ module.exports = {
                 new ActionRowBuilder().addComponents(
                     new TextInputBuilder()
                         .setCustomId('contact')
-                        .setLabel('Te recontacter (facultatif)')
+                        .setLabel('Vous recontacter (facultatif)')
                         .setPlaceholder('Pseudo Discord, e-mail… laissez vide si vous préférez.')
                         .setStyle(TextInputStyle.Short)
                         .setMaxLength(200)
@@ -96,7 +96,7 @@ module.exports = {
                                '[formulaire de signalement Discord](https://support.discord.com/hc/fr/requests/new).',
                     }
                 )
-                .setFooter({ text: 'Pour un dysfonctionnement technique du bot, utilise plutôt /signaler bug.' });
+                .setFooter({ text: 'Pour un dysfonctionnement technique du bot, utilisez plutôt /signaler bug.' });
 
             return interaction.reply({ embeds: [embed], ephemeral: true });
         }
@@ -118,7 +118,7 @@ module.exports = {
             new ActionRowBuilder().addComponents(
                 new TextInputBuilder()
                     .setCustomId('contact')
-                    .setLabel('Te recontacter (facultatif)')
+                    .setLabel('Vous recontacter (facultatif)')
                     .setPlaceholder('Pseudo Discord, e-mail… laissez vide si vous préférez.')
                     .setStyle(TextInputStyle.Short)
                     .setMaxLength(200)
@@ -146,7 +146,7 @@ async function handleReportModal(interaction) {
             embeds: [buildErrorEmbed({
                 title: 'Signalement impossible',
                 cause: 'Cette instance de Quasar n\'a pas de destination de signalement configurée.',
-                action: 'Préviens directement l\'équipe du serveur, ou la personne qui héberge ce bot.',
+                action: 'Prévenez directement l\'équipe du serveur, ou la personne qui héberge ce bot.',
             })],
         });
     }
@@ -195,7 +195,7 @@ async function handleReportModal(interaction) {
                 .setFooter({
                     text: contact
                         ? 'Le contact que vous avez indiqué a été joint au signalement.'
-                        : 'Aucun moyen de te recontacter n\'a été transmis.',
+                        : 'Aucun moyen de vous recontacter n\'a été transmis.',
                 })
                 .setTimestamp()
         ],

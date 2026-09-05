@@ -146,7 +146,7 @@ function buildGuildCommands(fileCommands, customRows) {
         if (placesRestantes <= 0) {
             rejets.push({
                 name: row.name,
-                reason: `plafond de ${GUILD_CHAT_INPUT_COMMANDS_MAX} commandes par serveur atteint : supprime des commandes personnalisées pour que celle-ci soit déployée`,
+                reason: `plafond de ${GUILD_CHAT_INPUT_COMMANDS_MAX} commandes par serveur atteint : supprimez des commandes personnalisées pour que celle-ci soit déployée`,
             });
             continue;
         }

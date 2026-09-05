@@ -34,7 +34,7 @@ async function loadWelcome(container, guildId) {
                     </div>
                     <div>
                         <label style="font-size:.8rem;color:var(--text-secondary);margin-bottom:.4rem;display:block">Message texte</label>
-                        <textarea class="input" id="welcome-message" rows="3" placeholder="Bienvenue {user} sur {server} ! Tu es le membre #{membercount}." style="resize:vertical">${config.welcome_message || ''}</textarea>
+                        <textarea class="input" id="welcome-message" rows="3" placeholder="Bienvenue {user} sur {server} ! Membre numéro {membercount}." style="resize:vertical">${config.welcome_message || ''}</textarea>
                         <p style="font-size:.75rem;color:var(--text-muted);margin-top:.3rem">{user} · {username} · {server} · {membercount}</p>
                     </div>
 

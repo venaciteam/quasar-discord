@@ -70,7 +70,7 @@ module.exports = {
 
         // ── Construction de l'embed (ton accessible, non juridique) ───────────
         const embed = new EmbedBuilder()
-            .setTitle('🔒 Les données que Quasar traite te concernant')
+            .setTitle('🔒 Les données que Quasar traite vous concernant')
             .setColor(ACCENT_COLOR)
             .setDescription(
                 `Voici les catégories de données que Quasar traite à votre sujet **sur le serveur ${interaction.guild.name}**. ` +
@@ -89,12 +89,12 @@ module.exports = {
         // 2. Sanctions — on donne le nombre, jamais le détail (potentiellement
         //    sensible) : pour en connaître la teneur, on renvoie vers l'admin.
         embed.addFields({
-            name: '⚖️ Sanctions de modération te concernant',
+            name: '⚖️ Sanctions de modération vous concernant',
             value: sanctions.total > 0
-                ? `**${sanctions.total}** sanction(s) enregistrée(s) te concernant ici` +
+                ? `**${sanctions.total}** sanction(s) enregistrée(s) vous concernant ici` +
                   (sanctions.actives > 0 ? `, dont **${sanctions.actives}** encore active(s).` : ' (aucune active actuellement).') +
                   '\nPour en connaître le détail, adressez-vous à l\'équipe d\'administration du serveur.'
-                : 'Aucune sanction enregistrée te concernant sur ce serveur.',
+                : 'Aucune sanction enregistrée vous concernant sur ce serveur.',
         });
 
         // 3. Tickets ouverts à ton nom — on rappelle que le contenu des échanges
@@ -114,7 +114,7 @@ module.exports = {
                 name: '🔊 Préférences de salons vocaux temporaires',
                 value:
                     'Vos préférences de salon vocal temporaire (nom du salon, limite de membres) sont mémorisées ' +
-                    'pour te les réappliquer automatiquement la prochaine fois.',
+                    'pour vous les réappliquer automatiquement la prochaine fois.',
             });
         }
 
@@ -200,7 +200,7 @@ async function handleMesDonneesButton(interaction) {
                     .setTitle('📨 Demande déjà en cours')
                     .setColor(ACCENT_COLOR)
                     .setDescription(
-                        'Une demande de suppression te concernant est **déjà en attente de traitement** sur ce serveur. ' +
+                        'Une demande de suppression vous concernant est **déjà en attente de traitement** sur ce serveur. ' +
                         'Inutile d\'en déposer une nouvelle : l\'équipe d\'administration du serveur en a été informée ' +
                         'et dispose d\'un mois pour y répondre.\n\n' +
                         `Pour un suivi ou une précision, vous pouvez contacter l\'équipe du serveur ou Venacity (${VENACITY_CONTACT}).`
@@ -231,7 +231,7 @@ async function handleMesDonneesButton(interaction) {
                     'Elle dispose d\'**un mois** pour y répondre.\n\n' +
                     `Venacity (${VENACITY_CONTACT}), qui héberge Quasar, a acheminé votre demande et exécutera la décision de l\'équipe. ` +
                     'Certaines données peuvent devoir être conservées (par exemple une sanction encore active) ; ' +
-                    'le cas échéant, l\'équipe du serveur te le fera savoir.'
+                    'le cas échéant, l\'équipe du serveur vous le fera savoir.'
                 )
                 .setFooter({ text: 'Vous pouvez fermer ce message : votre demande est enregistrée.' }),
         ],

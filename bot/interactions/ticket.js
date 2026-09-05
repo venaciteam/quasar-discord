@@ -83,7 +83,7 @@ async function handleTicketInteraction(interaction) {
             return userError(interaction, {
                 title: 'Impossible de créer le ticket',
                 cause: 'Je n\'ai pas pu créer le salon. Il me manque probablement la permission **Gérer les salons**, ou la catégorie configurée a été supprimée.',
-                action: 'Préviens un administrateur : il doit vérifier mes permissions et relancer `/ticket setup` si la catégorie n\'existe plus.',
+                action: 'Prévenez un administrateur : il doit vérifier mes permissions et relancer `/ticket setup` si la catégorie n\'existe plus.',
             });
         }
 

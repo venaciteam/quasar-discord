@@ -86,6 +86,7 @@ cp .env.example .env
 | `ABUSE_REPORT_URL` | Où reçois-tu les signalements d'abus (`/signaler abus`). **Vide par défaut** : sans ça, aucun signalement d'abus ne quitte ton instance |
 | `INSTANCE_ABUSE_CONTACT` | Contact affiché pour signaler un abus quand `ABUSE_REPORT_URL` est vide (e-mail ou URL) |
 | `REPORT_RELAY_URL` | Où partent les bugs du logiciel (`/signaler bug`). Défaut : `https://sema.vena.city` |
+| `INCIDENT_WEBHOOK_URL` | Webhook Discord où ton instance annonce ses propres incidents techniques (erreur inattendue, promesse rejetée). **Vide par défaut** : les incidents restent alors dans les journaux |
 | `GUILD_PURGE_GRACE_DAYS` | Délai avant suppression des données d'un serveur quitté (défaut : `7` jours, `0` = immédiat) |
 | `QUASAR_ADMIN_API_KEY` | Clé d'administration du journal des nouveautés (`/api/admin/nouveautes`). **Vide par défaut** : sans elle, ces routes répondent 503 et rien ne peut être publié |
 | `STRIPE_LINK_ONCE_2` &nbsp;·&nbsp; `_5` &nbsp;·&nbsp; `_CUSTOM` | Liens de paiement ponctuels de la page `/soutenir`. Chacun est optionnel : un lien absent masque son bouton |
