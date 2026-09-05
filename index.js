@@ -14,6 +14,14 @@ if (fs.existsSync(envPath)) {
     });
 }
 
+// Filet de dernier recours, posé AVANT tout le reste : le bot Discord et l'API
+// du dashboard partagent ce processus, et une promesse rejetée sans gestionnaire
+// l'arrêterait — déconnectant le bot de tous les serveurs pour une erreur qui ne
+// concernait qu'une requête HTTP. Express 5 couvre les handlers de routes ; ce
+// filet couvre ce qui lui échappe (callbacks d'EventEmitter, événements du bot,
+// minuteries). Détail du raisonnement et de ses limites : api/services/incidents.js.
+require('./api/services/incidents').installProcessGuard();
+
 // Le module ./api n'a volontairement aucun effet de bord au require : ses routes
 // (et donc la base SQLite et discord.js) ne sont chargées qu'à l'appel de
 // createApi(). C'est ce qui permet au mode `site` de démarrer sans base ni token.
@@ -91,7 +99,15 @@ async function main() {
         app = createApi(client, mode);
     }
 
-    app.listen(PORT, HOST, () => {
+    app.listen(PORT, HOST, (err) => {
+        // Express 5 ne lève plus l'erreur d'écoute : il la passe à ce callback.
+        // Sans ce test, un port déjà occupé afficherait la bannière de démarrage
+        // habituelle sur un serveur qui n'écoute rien.
+        if (err) {
+            console.error(`[Quasar] Impossible d'écouter sur ${HOST}:${PORT} —`, err.message);
+            process.exit(1);
+        }
+
         const entryPoint = mode === 'site' ? 'Vitrine' : 'Dashboard';
         console.log(`[Quasar] ${entryPoint}: http://localhost:${PORT}`);
 

@@ -39,24 +39,6 @@ const router = express.Router({ mergeParams: true });
 
 const SNOWFLAKE = /^\d{17,20}$/;
 
-/**
- * Enveloppe un handler asynchrone.
- *
- * Express 4 ne capture PAS le rejet d'une promesse renvoyée par un handler : il
- * remonte en `unhandledRejection`, et Node arrête le processus — c'est-à-dire le
- * bot Discord entier, qui tourne dans le même processus que l'API. Un imprévu de
- * cette route (contrainte SQLite, réponse inattendue de Discord) ne doit pas
- * pouvoir déconnecter le bot de tous les serveurs.
- */
-function guarded(handler) {
-    return (req, res, next) => Promise.resolve(handler(req, res, next)).catch(err => {
-        console.error('[Quasar Anti-raid] Erreur inattendue :', err);
-        if (!res.headersSent) {
-            res.status(500).json({ error: 'Une erreur inattendue est survenue côté Quasar. Réessayez dans un instant.' });
-        }
-    });
-}
-
 // ─── Catalogue des actions ──────────────────────────────────────────────────
 //
 // La liste des actions valides vient du socle (ACTION_NAMES) : la recopier
@@ -255,12 +237,12 @@ function resolveGuild(req) {
 
 // GET / — état complet du module pour ce serveur.
 // Lecture en base uniquement : aucun appel à Discord.
-router.get('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.get('/', requireAuth, requireGuildAdmin, async (req, res) => {
     res.json(buildState(req.params.guildId));
-}));
+});
 
 // PUT / — enregistre la configuration.
-router.put('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.put('/', requireAuth, requireGuildAdmin, async (req, res) => {
     const guildId = req.params.guildId;
 
     const parsed = parseConfigPayload(req.body);
@@ -293,11 +275,11 @@ router.put('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
     antiraid.invalidateConfig(guildId);
 
     res.json({ success: true, ...buildState(guildId) });
-}));
+});
 
 // POST /panic — bascule le serveur en mode panique, à la demande.
 // La durée du corps est optionnelle : sans elle, celle de la configuration.
-router.post('/panic', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.post('/panic', requireAuth, requireGuildAdmin, async (req, res) => {
     const guildId = req.params.guildId;
     const { guild, error } = resolveGuild(req);
     if (error) return res.status(error.status).json(error.body);
@@ -338,10 +320,10 @@ router.post('/panic', requireAuth, requireGuildAdmin, guarded(async (req, res) =
     }
 
     res.json({ success: true, panic: antiraid.getPanicState(guildId) });
-}));
+});
 
 // DELETE /panic — levée manuelle, sans attendre l'échéance.
-router.delete('/panic', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.delete('/panic', requireAuth, requireGuildAdmin, async (req, res) => {
     const guildId = req.params.guildId;
     const { guild, error } = resolveGuild(req);
     if (error) return res.status(error.status).json(error.body);
@@ -362,6 +344,6 @@ router.delete('/panic', requireAuth, requireGuildAdmin, guarded(async (req, res)
     }
 
     res.json({ success: true, panic: antiraid.getPanicState(guildId) });
-}));
+});
 
 module.exports = router;

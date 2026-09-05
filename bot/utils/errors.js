@@ -18,20 +18,12 @@
 // ═══════════════════════════════════════════════════════════════
 
 const { EmbedBuilder } = require('discord.js');
+// Une seule implémentation du code d'incident dans le projet : le dashboard en
+// génère aussi (gestionnaire d'erreurs de l'API, filet global du processus), et
+// deux alphabets qui divergent produiraient des codes impossibles à rapprocher.
+const { newIncidentCode } = require('../../api/services/incidents');
 
 const COLOR_ERROR = 0xED4245;
-
-// Alphabet sans caractères ambigus : un code se lit à voix haute ou se recopie
-// depuis une capture d'écran, O/0 et I/1 y sont des pièges.
-const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-
-function newIncidentCode() {
-    let out = '';
-    for (let i = 0; i < 4; i++) {
-        out += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
-    }
-    return `QSR-${out}`;
-}
 
 // ─── Traduction des erreurs Discord ───────────────────────────────────────
 // Codes officiels de l'API Discord. Seuls ceux que Quasar peut réellement
