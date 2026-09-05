@@ -107,7 +107,7 @@ function createConfigCommand(opts) {
                     return userError(interaction, {
                         title: 'Salon introuvable',
                         cause: 'Le salon configuré a été supprimé, ou je n\'y ai plus accès.',
-                        action: `Reconfigure-le avec \`/${name} channel\`.`,
+                        action: `Reconfigurez-le avec \`/${name} channel\`.`,
                     });
                 }
 

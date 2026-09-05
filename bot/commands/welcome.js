@@ -11,6 +11,6 @@ module.exports = createConfigCommand({
     embedCol: 'welcome_embed',
     enabledCol: 'welcome_enabled',
     defaultEmbedTitle: 'Bienvenue sur {server} !',
-    defaultEmbedDesc: 'Bienvenue {user} ! Tu es le membre numéro **{membercount}**.',
+    defaultEmbedDesc: '{user} arrive — membre numéro **{membercount}**.',
     defaultTestMsg: (member) => `👋 Bienvenue ${member} sur **${member.guild.name}** !`
 });

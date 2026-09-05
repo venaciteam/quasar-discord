@@ -42,7 +42,7 @@ const DISCORD_ERRORS = {
     10011: {
         title: 'Rôle introuvable',
         cause: 'Le rôle a été supprimé depuis sa configuration.',
-        action: 'Reconfigure la fonctionnalité avec un rôle existant.',
+        action: 'Reconfigurez la fonctionnalité avec un rôle existant.',
     },
     10013: {
         title: 'Utilisateur introuvable',
@@ -57,7 +57,7 @@ const DISCORD_ERRORS = {
     30003: {
         title: 'Trop de messages épinglés',
         cause: 'Discord limite à 50 messages épinglés par salon.',
-        action: 'Détache un message épinglé, puis recommencez.',
+        action: 'Détachez un message épinglé, puis recommencez.',
     },
     40005: {
         title: 'Fichier trop volumineux',
@@ -92,7 +92,7 @@ const DISCORD_ERRORS = {
     160002: {
         title: 'Fil déjà archivé',
         cause: 'Ce fil de discussion est archivé et ne peut plus être modifié.',
-        action: 'Désarchive-le, puis recommencez.',
+        action: 'Désarchivez-le, puis recommencez.',
     },
 };
 
@@ -130,7 +130,7 @@ const NETWORK_CODES = new Set(['ECONNREFUSED', 'ENOTFOUND', 'ETIMEDOUT', 'ECONNR
 const FALLBACK = {
     title: 'Erreur inattendue',
     cause: 'Quelque chose s\'est mal passé et je n\'ai pas su l\'identifier précisément.',
-    action: 'Transmets le code ci-dessous à l\'administrateur du serveur : il permet de retrouver le détail dans les journaux.',
+    action: 'Transmettez le code ci-dessous à l\'administrateur du serveur : il permet de retrouver le détail dans les journaux.',
 };
 
 /**

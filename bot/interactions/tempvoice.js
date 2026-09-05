@@ -110,7 +110,7 @@ async function handleTempVoiceInteraction(interaction) {
                 return userError(interaction, {
                     title: 'Personne d\'autre dans le salon',
                     cause: 'Vous êtes seul·e ici : il n\'y a personne à qui transférer la propriété.',
-                    action: 'Attendez que quelqu\'un rejoigne, puis réessaie.',
+                    action: 'Attendez que quelqu\'un rejoigne, puis réessayez.',
                 });
             }
 
