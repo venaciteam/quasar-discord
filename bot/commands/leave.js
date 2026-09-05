@@ -10,7 +10,7 @@ module.exports = createConfigCommand({
     messageCol: 'leave_message',
     embedCol: 'leave_embed',
     enabledCol: 'leave_enabled',
-    defaultEmbedTitle: '{username} nous a quitté...',
-    defaultEmbedDesc: 'On était {membercount} avec toi. Bonne route 👋',
+    defaultEmbedTitle: '{username} s\'en va...',
+    defaultEmbedDesc: 'Il reste **{membercount}** membres. Bonne route 👋',
     defaultTestMsg: (member) => `🚪 **${member.user.username}** vient de quitter **${member.guild.name}**. Il reste ${member.guild.memberCount} membres.`
 });

@@ -19,7 +19,7 @@ module.exports = {
             return userError(interaction, {
                 title: 'Aucun salon de logs configuré',
                 cause: 'Il n\'y a rien à retirer : aucun salon de logs n\'est défini sur ce serveur.',
-                action: 'Pour en définir un, utilise `/log #salon`.',
+                action: 'Pour en définir un, utilisez `/log #salon`.',
             });
         }
 

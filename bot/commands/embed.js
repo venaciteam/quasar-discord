@@ -150,7 +150,7 @@ module.exports = {
                     return userError(interaction, {
                         title: 'Je ne peux pas modifier ce message',
                         cause: 'Discord n\'autorise un bot à modifier que les messages qu\'il a lui-même envoyés.',
-                        action: 'Pour modifier cet embed, supprime le message et renvoie-le avec `/embed send`.',
+                        action: 'Pour modifier cet embed, supprimez le message et renvoyez-le avec `/embed send`.',
                     });
                 }
 

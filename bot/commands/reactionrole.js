@@ -64,7 +64,7 @@ module.exports = {
             // Poster l'embed dans le channel
             const embed = new EmbedBuilder()
                 .setTitle(titre)
-                .setDescription(description + '\n\n*(Aucun rôle configuré — utilise `/reactionrole add` pour en ajouter)*')
+                .setDescription(description + '\n\n*(Aucun rôle configuré — utilisez `/reactionrole add` pour en ajouter)*')
                 .setColor(0xc86e8e)
                 .setFooter({ text: `Panel #${panelId} • Mode ${mode}` });
 
