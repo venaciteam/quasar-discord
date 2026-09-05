@@ -40,24 +40,6 @@ const router = express.Router({ mergeParams: true });
 
 const SNOWFLAKE = /^\d{17,20}$/;
 
-/**
- * Enveloppe un handler asynchrone.
- *
- * Express 4 ne capture PAS le rejet d'une promesse renvoyée par un handler : il
- * remonte en `unhandledRejection`, et Node arrête le processus — c'est-à-dire le
- * bot Discord entier, qui tourne dans le même processus que l'API. Un imprévu de
- * cette route (contrainte SQLite, réponse inattendue de Discord) ne doit pas
- * pouvoir déconnecter le bot de tous les serveurs.
- */
-function guarded(handler) {
-    return (req, res, next) => Promise.resolve(handler(req, res, next)).catch(err => {
-        console.error('[Quasar Honeypot] Erreur inattendue :', err);
-        if (!res.headersSent) {
-            res.status(500).json({ error: 'Une erreur inattendue est survenue côté Quasar. Réessayez dans un instant.' });
-        }
-    });
-}
-
 // ─── Catalogue des actions ──────────────────────────────────────────────────
 //
 // La liste des actions valides vient du socle (ACTION_NAMES) : la recopier
@@ -263,12 +245,12 @@ function buildState(req) {
 // ─── Routes ─────────────────────────────────────────────────────────────────
 
 // GET / — état complet du module pour ce serveur.
-router.get('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.get('/', requireAuth, requireGuildAdmin, async (req, res) => {
     res.json(buildState(req));
-}));
+});
 
 // PUT / — enregistre la configuration.
-router.put('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.put('/', requireAuth, requireGuildAdmin, async (req, res) => {
     const guildId = req.params.guildId;
 
     const parsed = parseConfigPayload(req.body);
@@ -307,6 +289,6 @@ router.put('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
     invalidateConfig();
 
     res.json({ success: true, ...buildState(req) });
-}));
+});
 
 module.exports = router;

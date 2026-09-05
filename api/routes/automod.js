@@ -34,24 +34,6 @@ const router = express.Router({ mergeParams: true });
 
 const SNOWFLAKE = /^\d{17,20}$/;
 
-/**
- * Enveloppe un handler asynchrone.
- *
- * Express 4 ne capture PAS le rejet d'une promesse renvoyée par un handler : il
- * remonte en `unhandledRejection`, et Node arrête le processus — c'est-à-dire le
- * bot Discord entier, qui tourne dans le même processus que l'API. Un imprévu de
- * cette route (contrainte SQLite, réponse inattendue de Discord) ne doit pas
- * pouvoir déconnecter le bot de tous les serveurs.
- */
-function guarded(handler) {
-    return (req, res, next) => Promise.resolve(handler(req, res, next)).catch(err => {
-        console.error('[Quasar AutoMod] Erreur inattendue :', err);
-        if (!res.headersSent) {
-            res.status(500).json({ error: 'Une erreur inattendue est survenue côté Quasar. Réessayez dans un instant.' });
-        }
-    });
-}
-
 // Colonnes de portée réellement pilotées par ce module. La liste de référence
 // vient de database.js : la recopier ferait diverger la validation du domaine des
 // tables le jour où une colonne y est ajoutée.
@@ -342,7 +324,7 @@ function buildQuotas(counts) {
 // GET / — synchronise puis renvoie l'état complet du module pour ce serveur.
 // La synchronisation est déclenchée ICI, à l'ouverture de l'onglet : pas de tâche
 // de fond, les instances sur Raspberry Pi ne paient que ce qui est regardé.
-router.get('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.get('/', requireAuth, requireGuildAdmin, async (req, res) => {
     const { guild, error } = resolveGuild(req);
     if (error) return res.status(error.status).json(error.body);
 
@@ -378,10 +360,10 @@ router.get('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
         console.error('[Quasar AutoMod] Synchronisation des règles en échec :', err.message);
         res.status(502).json({ error: describeDiscordError(err) });
     }
-}));
+});
 
 // POST / — crée une règle chez Discord, puis l'enregistre dans le miroir.
-router.post('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.post('/', requireAuth, requireGuildAdmin, async (req, res) => {
     const { guild, error } = resolveGuild(req);
     if (error) return res.status(error.status).json(error.body);
 
@@ -442,7 +424,7 @@ router.post('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
     );
 
     res.status(201).json({ success: true, id: Number(result.lastInsertRowid), discord_rule_id: created.id });
-}));
+});
 
 // PUT /:id — édite la règle chez Discord.
 //
@@ -450,7 +432,7 @@ router.post('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
 // ligne jamais poussée), cette même route la RECRÉE à partir du formulaire. C'est
 // le chemin de récupération demandé par l'interface — inutile d'ajouter un
 // endpoint « recréer » qui ferait exactement la même chose.
-router.put('/:id', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.put('/:id', requireAuth, requireGuildAdmin, async (req, res) => {
     const { guild, error } = resolveGuild(req);
     if (error) return res.status(error.status).json(error.body);
 
@@ -537,10 +519,10 @@ router.put('/:id', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
     );
 
     res.json({ success: true, discord_rule_id: discordRuleId });
-}));
+});
 
 // PUT /:id/enabled — bascule d'activation, sans repasser par tout le formulaire.
-router.put('/:id/enabled', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.put('/:id/enabled', requireAuth, requireGuildAdmin, async (req, res) => {
     const { guild, error } = resolveGuild(req);
     if (error) return res.status(error.status).json(error.body);
 
@@ -580,12 +562,12 @@ router.put('/:id/enabled', requireAuth, requireGuildAdmin, guarded(async (req, r
         .run(enabled ? 1 : 0, ts, ts, row.id);
 
     res.json({ success: true, enabled });
-}));
+});
 
 // DELETE /:id — supprime la règle chez Discord puis la ligne locale.
 // Sur une règle déjà disparue de Discord, c'est le nettoyage de la configuration
 // orpheline : la ligne part sans que Discord soit sollicité.
-router.delete('/:id', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.delete('/:id', requireAuth, requireGuildAdmin, async (req, res) => {
     const { guild, error } = resolveGuild(req);
     if (error) return res.status(error.status).json(error.body);
 
@@ -619,6 +601,6 @@ router.delete('/:id', requireAuth, requireGuildAdmin, guarded(async (req, res) =
 
     dropRow();
     res.json({ success: true, discord_deleted: true });
-}));
+});
 
 module.exports = router;

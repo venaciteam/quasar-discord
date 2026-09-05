@@ -40,24 +40,6 @@ const MAX_SCOPE_ENTRIES = 25;
 const MAX_RESPONSE_MESSAGE = 1000;
 const MAX_PUNISHMENTS_LENGTH = 200;
 
-/**
- * Enveloppe un handler asynchrone.
- *
- * Express 4 ne capture PAS le rejet d'une promesse renvoyée par un handler : il
- * remonte en `unhandledRejection`, et Node arrête le processus — c'est-à-dire le
- * bot Discord entier, qui tourne dans le même processus que l'API. Un imprévu de
- * cette route (contrainte SQLite, donnée inattendue) ne doit pas pouvoir
- * déconnecter le bot de tous les serveurs.
- */
-function guarded(handler) {
-    return (req, res, next) => Promise.resolve(handler(req, res, next)).catch(err => {
-        console.error('[Quasar Escalade] Erreur inattendue :', err);
-        if (!res.headersSent) {
-            res.status(500).json({ error: 'Une erreur inattendue est survenue côté Quasar. Réessayez dans un instant.' });
-        }
-    });
-}
-
 // ─── Catalogue des actions ──────────────────────────────────────────────────
 //
 // La liste des actions valides vient du socle (ACTION_NAMES) : la recopier
@@ -262,12 +244,12 @@ const DUPLICATE_THRESHOLD = {
 
 // GET / — état complet du module pour ce serveur.
 // Lecture en base uniquement : aucun appel à Discord, aucune tâche de fond.
-router.get('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.get('/', requireAuth, requireGuildAdmin, async (req, res) => {
     res.json(buildState(req.params.guildId));
-}));
+});
 
 // POST / — crée un palier.
-router.post('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.post('/', requireAuth, requireGuildAdmin, async (req, res) => {
     const guildId = req.params.guildId;
 
     const parsed = parseTierPayload(req.body);
@@ -309,10 +291,10 @@ router.post('/', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
     }
 
     res.status(201).json({ success: true, id: Number(result.lastInsertRowid) });
-}));
+});
 
 // PUT /:id — édite un palier.
-router.put('/:id', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.put('/:id', requireAuth, requireGuildAdmin, async (req, res) => {
     const guildId = req.params.guildId;
     const tier = findTier(guildId, Number(req.params.id));
     if (!tier) return res.status(404).json({ error: 'Palier introuvable.' });
@@ -347,10 +329,10 @@ router.put('/:id', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
     }
 
     res.json({ success: true });
-}));
+});
 
 // PUT /:id/enabled — bascule d'activation, sans repasser par tout le formulaire.
-router.put('/:id/enabled', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.put('/:id/enabled', requireAuth, requireGuildAdmin, async (req, res) => {
     const guildId = req.params.guildId;
     const tier = findTier(guildId, Number(req.params.id));
     if (!tier) return res.status(404).json({ error: 'Palier introuvable.' });
@@ -360,16 +342,16 @@ router.put('/:id/enabled', requireAuth, requireGuildAdmin, guarded(async (req, r
         .run(enabled ? 1 : 0, tier.id, guildId);
 
     res.json({ success: true, enabled });
-}));
+});
 
 // DELETE /:id — supprime un palier.
-router.delete('/:id', requireAuth, requireGuildAdmin, guarded(async (req, res) => {
+router.delete('/:id', requireAuth, requireGuildAdmin, async (req, res) => {
     const guildId = req.params.guildId;
     const tier = findTier(guildId, Number(req.params.id));
     if (!tier) return res.status(404).json({ error: 'Palier introuvable.' });
 
     getDb().prepare('DELETE FROM warn_escalation WHERE id = ? AND guild_id = ?').run(tier.id, guildId);
     res.json({ success: true });
-}));
+});
 
 module.exports = router;
